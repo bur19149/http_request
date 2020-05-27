@@ -1,0 +1,16 @@
+name: http_request
+description: A sample command-line application.
+# version: 1.0.0
+# homepage: https://www.example.com
+# author: Dominik Bursik <56315119+bur19149@users.noreply.github.com>
+
+environment:
+  sdk: '>=2.5.0 <3.0.0'
+
+dependencies:
+  http: ^0.12.1
+#  path: ^1.6.0
+
+dev_dependencies:
+  pedantic: ^1.8.0
+  test: ^1.6.0
