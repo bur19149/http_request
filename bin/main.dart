@@ -5,3 +5,4 @@ main(List<String> arguments) {
 }
 
 // teste ob es wirklich funktioniert
+// ich bin der pedo bär
