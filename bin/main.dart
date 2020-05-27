@@ -1,7 +1,28 @@
 import 'package:http_request/http_request.dart' as http_request;
 import 'objects.dart' as objects;
+import 'requests/login.dart' as login;
 
-main(List<String> arguments) {
+main(List<String> arguments) async {
+
+print('\n\n${await login.requestUser()}');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   /*print(objects.AdminTermin(
       10,
       1,
