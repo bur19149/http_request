@@ -1,6 +1,6 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
 //import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
 
 ///Hier sind die Methoden die mehr als einmal verwendet werden
 abstract class ReusableMethods {
@@ -29,7 +29,7 @@ abstract class ReusableMethods {
     if (a.hasMatch(value)) {
       return value;
     } else {
-      throw ("Ungültiger Name.");
+      throw ('Ungültiger Name.');
     }
   }
 
@@ -47,7 +47,7 @@ abstract class ReusableMethods {
     if(a.hasMatch(value)) {
       return value;
     } else {
-      throw ("Ungüliger Ort.");
+      throw ('Ungüliger Ort.');
     }
   }
 }
@@ -56,7 +56,7 @@ abstract class Verwaltung{
   static String appVersion = 'alpha 0.1';
   static String token = ''; //Der Token wird beim Starten der App hinein geladen.
   static final String url = 'https://jugendevent.mainlevel.at/api/'; //For the http requests
-  var orgAppConfig = new File('OrgAppConfig.txt');
+  var orgAppConfig = File('OrgAppConfig.txt');
   List<UserTermin> eigeneTermine;
   List<AdminTermin> adminTermine;
   List<Zyklus> listeZyklusse;
@@ -132,7 +132,7 @@ abstract class Einloggen {
   void einloggen(String value) async {
     RegExp a = RegExp(r'^[A-Za-z0-9]+$');
     if(!a.hasMatch(ReusableMethods.stringPrufung(value))){
-      throw ("Ungültiger UserToken.");
+      throw ('Ungültiger UserToken.');
     }else{
       // var url = 'https://jugendevent.mainlevel.at/api/' <- URL in Verwaltung
       var url = '${Verwaltung.url}link';
@@ -205,7 +205,7 @@ class User{
   set plz(String value) {      ///wann man "value" auf int setzt schreit der DUMME kompiler.
     var megaGay=int.parse(ReusableMethods.stringPrufung(value));  //workaround
     if (megaGay < 1010 || megaGay > 9992) {
-      throw ("Die Postleitzahl ist ungültig.");
+      throw ('Die Postleitzahl ist ungültig.');
     } else {
       _plz=megaGay.toString();
     }
@@ -237,12 +237,12 @@ class User{
         }
       }
       if (count > 1) {
-        throw ("Ungültige Email Adresse. Mehr als ein \"@\"");
+        throw ('Ungültige Email Adresse. Mehr als ein \"@\"');
       } else {
         _email = value;
       }
     } else {
-      throw ("Ungültige Email Adresse.");
+      throw ('Ungültige Email Adresse.');
     }
   }
 
@@ -315,7 +315,7 @@ class UserTyp {
   }
 
   set permissions(List<Permission> value){
-    if(value==null||value.length<1){
+    if(value==null||value.isEmpty){
       throw Exception('Die Permissions Liste ist null.');
     }else{
       _permissions=value;
@@ -387,11 +387,11 @@ class UserTermin{
 
   set anmeldungStart(DateTime value) {
     if (value == null) {
-      throw ("Error:Das Datum ist Null.");
+      throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isAfter(_timeBis)) {
-      throw ("Error:Das Datum ist nach dem Ende.");
+      throw ('Error:Das Datum ist nach dem Ende.');
     } else if (value.isBefore(DateTime.now())) {
-      throw ("Der Termin darf nicht in der Verganganheit stattfinden");
+      throw ('Der Termin darf nicht in der Verganganheit stattfinden');
     } else {
       _anmeldungStart = value;
     }
@@ -399,9 +399,9 @@ class UserTermin{
 
   set anmeldungEnde(DateTime value) {
     if (value == null) {
-      throw ("Error:Das Datum ist Null.");
+      throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isBefore(_timeVon)){
-      throw ("Das Enddatum darf nicht vor dem beginn stattfinden.");
+      throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
     } else {
       _anmeldungEnde = value;
     }
@@ -409,11 +409,11 @@ class UserTermin{
 
   set timeVon(DateTime value) {
     if (value == null) {
-      throw ("Error:Das Datum ist Null.");
+      throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isAfter(_timeBis)) {
-      throw ("Error:Das Datum ist nach dem Ende.");
+      throw ('Error:Das Datum ist nach dem Ende.');
     } else if (value.isBefore(DateTime.now())) {
-      throw ("Der Termin darf nicht in der Verganganheit stattfinden");
+      throw ('Der Termin darf nicht in der Verganganheit stattfinden');
     } else {
       _timeVon = value;
     }
@@ -422,9 +422,9 @@ class UserTermin{
   set timeBis(DateTime value)
   {
     if(value == null){
-      throw ("Error:Das Datum ist Null.");
+      throw ('Error:Das Datum ist Null.');
     }else if(_timeVon != null && value.isBefore(_timeBis)){
-      throw ("Das Enddatum darf nicht vor dem beginn stattfinden.");
+      throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
     }else{
       _timeBis = value;
     }

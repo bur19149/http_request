@@ -1,6 +1,6 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
 //import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
 
 ///Hier sind die Methoden die mehr als einmal verwendet werden
 abstract class ReusableMethods {
@@ -56,7 +56,7 @@ abstract class Verwaltung {
   static String appVersion = 'alpha 0.1';
   static String token = ''; //Der Token wird beim Starten der App hinein geladen.
   static final String url = 'https://jugendevent.mainlevel.at/api/'; //For the http requests
-  var orgAppConfig = new File('OrgAppConfig.txt');
+  var orgAppConfig = File('OrgAppConfig.txt');
   List<UserTermin> eigeneTermine;
   List<AdminTermin> adminTermine;
   List<Zyklus> listeZyklusse;
@@ -69,14 +69,13 @@ abstract class Verwaltung {
     if (response.statusCode == 200) {
       //TODO
     } else {
-      throw Exception(
-          'unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
+      throw Exception('unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
     }
   }
 }
 
 abstract class Einloggen {
-  Future<String> get _localPath async {
+  Future<String> get _localPath async { //TODO auskommentieren bei einem Flutter Projekt
 //    final directory=await getApplicationDocumentsDirectory();
 //    return directory.path;
   }
@@ -115,22 +114,19 @@ abstract class Einloggen {
     // 403 = Der Token ist abgelaufen bzw. wurde vom User entfernt.
     //TODO schauen ob writeFile('') den token im file überschreibt, und alle möglichkeiten triggern aka 401/403
     if (response.statusCode == 401 || response.statusCode == 403) {
-      writeFile('');
+      await writeFile('');
       return false;
     }
-    throw Exception(
-        'unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
+    throw Exception('unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
   }
 
   getEigeneUserDaten() async {
-    var response = await http
-        .post('${Verwaltung.url}user', body: {'token': '${Verwaltung.token}'});
+    var response=await http.post('${Verwaltung.url}user', body: {'token': '${Verwaltung.token}'});
     if (response.statusCode == 200) {
       //TODO
       print(response.body);
     }
-    throw Exception(
-        'unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
+    throw Exception('unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
   }
 
   void einloggen(String value) async {
@@ -140,12 +136,9 @@ abstract class Einloggen {
     } else {
       // var url = 'https://jugendevent.mainlevel.at/api/' <- URL in Verwaltung
       var url = '${Verwaltung.url}link';
-      // print(url); /* For Debugging */ // print(value); /* For Debugging */
-      var response = await http.post(url, body: {
-        'userkey': '$value',
-        'name': 'POST',
-        'model': '???',
-        'version': '${Verwaltung.appVersion}'
+      //TODO für model das Handy modell holen und ka was wir mit Name machen.
+      var response = await http.post(url, body: {'userkey': '$value', 'name': 'POST',
+        'model': '???', 'version': '${Verwaltung.appVersion}'
       });
 
       // API DOKU SAGT:
@@ -154,7 +147,7 @@ abstract class Einloggen {
       // Parameter missing: 422 Es fehlen ein oder mehr Parameter
 
       if (response.statusCode == 200) {
-        writeFile(RegExp('.*"(.*)"}}').allMatches(response.body).toList()[0].group(1));
+        await writeFile(RegExp('.*"(.*)"}}').allMatches(response.body).toList()[0].group(1));
       } else {
         throw ('Error: Response status: ${response.statusCode}');
       }
@@ -176,19 +169,9 @@ class User {
   bool _registered;
 
   ///Constructor
-
-  User(
-      int userint,
-      String vorname,
-      String nachname,
-      String email,
-      String plz,
-      String ort,
-      UserTyp typ,
-      String jugendgruppe,
-      User parent,
-      List<User> children,
-      bool registered) {
+  //formatter:off
+  User(int userint, String vorname, String nachname, String email, String plz, String ort,
+      UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
     this.userint = userint;
     this.vorname = vorname;
     this.nachname = nachname;
@@ -200,7 +183,7 @@ class User {
     _parent = parent;
     this.children = children;
     _registered = registered;
-  }
+  } //formatter:on
 
   ///Setter
 
@@ -220,8 +203,7 @@ class User {
     _jugendgruppe = ReusableMethods.stringPrufung(value);
   }
 
-  set plz(String value) {
-    ///wann man "value" auf int setzt schreit der DUMME kompiler.
+  set plz(String value) { //wann man "value" auf int setzt schreit der DUMME kompiler.
     var megaGay = int.parse(ReusableMethods.stringPrufung(value)); //workaround
     if (megaGay < 1010 || megaGay > 9992) {
       throw ('Die Postleitzahl ist ungültig.');
@@ -374,7 +356,7 @@ class UserTermin {
   List<User> _teilnehmer;
 
   ///Constructor
-
+  //formatter:off
   UserTermin(int platze, int terminid, int veranstaltungsid, String ort, String name,
       String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
       DateTime timeBis, Zyklus zyklus, List<User> teilnehmer) {
@@ -390,7 +372,7 @@ class UserTermin {
     this.timeBis = timeBis;
     this.zyklus = zyklus;
     this.teilnehmer = teilnehmer;
-  }
+  }  //formatter:on
 
   ///Setter
 
@@ -438,7 +420,7 @@ class UserTermin {
     }
   }
 
-  //Die maximale platzanzahl auf der Website ist 99
+  ///Die maximale platzanzahl auf der Website ist 99
   set platze(int value) {
     if (value < 1 || value > 99) {
       throw Exception('Die Platzanzahl ist ungültig.');
@@ -485,13 +467,15 @@ class UserTermin {
 class AdminTermin extends UserTermin {
   bool _freigeschaltet;
 
+  ///Constructor
+  //formatter:off
   AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name,
       String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
       DateTime timeBis, Zyklus zyklus, List<User> teilnehmer, bool freigeschaltet) : super(platze,
       terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart, anmeldungEnd, timeVon,
       timeBis, zyklus, teilnehmer) {
     this.freigeschaltet = freigeschaltet;
-  }
+  }  //formatter:on
 
   ///Setter
 
