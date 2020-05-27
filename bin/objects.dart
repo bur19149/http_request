@@ -4,55 +4,38 @@ import 'dart:io';
 import 'requests/variables.dart' as variables;
 import 'pruefungen.dart' as pruefungen;
 
-abstract class Verwaltung {
-  var orgAppConfig = File('OrgAppConfig.txt');
-  List<UserTermin> eigeneTermine;
-  List<AdminTermin> adminTermine;
-  List<Zyklus> listeZyklusse;
-
-}
-
 class User {
-  int _userid;
-  String _jugendgruppe;
-  String _nachname;
-  String _vorname;
-  String _email;
-  String _plz; //KA WARUM DAS EIN STRING IST -> API will es leider so
-  String _ort;
-  User _parent;
-  UserTyp _typ;
-  List<User> _children;
-  bool _registered;
+  // @formatter:off
+  int        _userid;       // einzigartige Id
+  String     _jugendgruppe;
+  String     _nachname;
+  String     _vorname;
+  String     _email;
+  String     _plz;
+  String     _ort;
+  User       _parent;       // (optional) zugeordneter Elternaccount wenn Kind
+  UserTyp    _typ;
+  List<User> _children;     // (optional) zugeordnete Kinder wenn Elternaccount
+  bool       _registered;   // Zweck des Parameters wird in API-Doku nicht erklärt
+  // @formatter:on
 
+  // @formatter:off
   ///Constructor
-  //formatter:off
-  User(
-      int userint,
-      String vorname,
-      String nachname,
-      String email,
-      String plz,
-      String ort,
-      UserTyp typ,
-      String jugendgruppe,
-      User parent,
-      List<User> children,
-      bool registered) {
-    this.userint = userint;
-    this.vorname = vorname;
-    this.nachname = nachname;
-    this.email = email;
-    this.plz = plz;
-    this.ort = ort;
-    this.typ = typ;
+  User(int userint, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
+    this.userint      = userint;
+    this.vorname      = vorname;
+    this.nachname     = nachname;
+    this.email        = email;
+    this.plz          = plz;
+    this.ort          = ort;
+    this.typ          = typ;
     this.jugendgruppe = jugendgruppe;
-    _parent = parent;
-    this.children = children;
-    _registered = registered;
-  } //formatter:on
+    _parent           = parent;
+    this.children     = children;
+    _registered       = registered;
+  } // @formatter:on
 
-  ///Setter
+  // --------------------------------- Setter ---------------------------------
 
   set userint(int value) {
     _userid = pruefungen.prufeID(value);
@@ -120,6 +103,11 @@ class User {
   set children(List<User> value) {
     _children = value;
   }
+
+  @override
+  String toString() {
+    return super.toString();
+  }
 }
 
 class Admin extends User {
@@ -158,8 +146,7 @@ class Admin extends User {
   }
 
   set anmeldung(String value) {
-    _anmeldung =
-        pruefungen.prufeName(pruefungen.stringPrufung(value));
+    _anmeldung = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
   set portal(String value) {
@@ -168,19 +155,24 @@ class Admin extends User {
 }
 
 class UserTyp {
-  int _typid;
-  String _name;
-  List<Permission> _permissions;
+  // -------------------------------- Variablen -------------------------------
 
-  ///Constructor
+  // @formatter:off
+  int              _typid;       // ID des Typs
+  String           _name;        // Bezeichnung des Usertyps z. B. Admin
+  List<Permission> _permissions; // Liste der Berechtigungen
+  // @formatter:on
 
+  // ----------------------------- Konstruktoren ------------------------------
+
+  // @formatter:off
   UserTyp(int typid, String name, List<Permission> permission) {
-    this.typID = typid;
-    this.name = name;
+    this.typID       = typid;
+    this.name        = name;
     this.permissions = permission;
-  }
+  } // @formatter:on
 
-  ///Setter
+  // --------------------------------- Setter ---------------------------------
 
   set typID(int value) {
     _typid = pruefungen.prufeID(value);
@@ -197,29 +189,54 @@ class UserTyp {
       _permissions = value;
     }
   }
+
+  // -------------------------------- toString --------------------------------
+
+  @override
+  String toString() {
+    String str = 'User-Typ: $_name ($_typid)\nBerechtigungen:\n---------------\n';
+    for(Permission p in _permissions) {
+      str += p.toString() + '\n---------------\n';
+    }
+    return str;
+  }
 }
 
 class Permission {
-  int _permissionid;
-  String _description;
-  String _name;
-  String _code;
+  // -------------------------------- Variablen -------------------------------
 
+  // @formatter:off
+  int    _permissionid; // einzigartige ID
+  String _description;  // Beschreibung der Berechtigung
+  String _name;
+  String _code;         // Berechtigungscode z. B. termin.bearbeiten
+  // @formatter:on
+
+  // ----------------------------- Konstruktoren ------------------------------
+
+  // @formatter:off
   Permission(int permissionID, String name, String description, String code) {
     this.permissionID = permissionID;
-    _name = name;
-    this.code = code;
-  }
+    _name             = name;
+    _description      = description;
+    this.code         = code;
+  } // @formatter:on
 
-  ///Setter
+  // --------------------------------- Setter ---------------------------------
 
   set permissionID(int value) {
     _permissionid = pruefungen.prufeID(value);
   }
 
   set code(String value) {
-    //TODO ka ob code auch Zahlen enthaten kann oder zahlen sind
     _code = pruefungen.stringPrufung(value);
+  }
+
+  // -------------------------------- toString --------------------------------
+
+  @override
+  String toString() {
+    return 'Berechtigung: $_name ($_permissionid)\nBeschreibung: $_description\nCode:         $_code';
   }
 }
 
@@ -239,8 +256,7 @@ class UserTermin {
 
   ///Constructor
   //formatter:off
-  UserTermin(
-      int platze,
+  UserTermin(int platze,
       int terminid,
       int veranstaltungsid,
       String ort,
@@ -338,8 +354,7 @@ class UserTermin {
   }
 
   set beschreibung(String value) {
-    _beschreibung =
-        pruefungen.prufeName(pruefungen.stringPrufung(value));
+    _beschreibung = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
   set zyklus(Zyklus value) {
@@ -361,8 +376,7 @@ class AdminTermin extends UserTermin {
 
   ///Constructor
   //formatter:off
-  AdminTermin(
-      int platze,
+  AdminTermin(int platze,
       int terminid,
       int veranstaltungsid,
       String ort,
@@ -376,18 +390,18 @@ class AdminTermin extends UserTermin {
       List<User> teilnehmer,
       bool freigeschaltet)
       : super(
-            platze,
-            terminid,
-            veranstaltungsid,
-            ort,
-            name,
-            beschreibung,
-            anmeldungStart,
-            anmeldungEnd,
-            timeVon,
-            timeBis,
-            zyklus,
-            teilnehmer) {
+      platze,
+      terminid,
+      veranstaltungsid,
+      ort,
+      name,
+      beschreibung,
+      anmeldungStart,
+      anmeldungEnd,
+      timeVon,
+      timeBis,
+      zyklus,
+      teilnehmer) {
     this.freigeschaltet = freigeschaltet;
   } //formatter:on
 
