@@ -1,6 +1,7 @@
 //import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'requests/variables.dart' as variables;
 
 ///Hier sind die Methoden die mehr als einmal verwendet werden
 abstract class ReusableMethods {
@@ -21,7 +22,7 @@ abstract class ReusableMethods {
 
   /// Wird mit einer Regular Expression getestet. Wird in set Vorname und set Nachname verwendet
   static String prufeName(String value) {
-    RegExp a = RegExp(
+    var a = RegExp(
         r'^[A-Za-zöÖäÄüÜßàéëïáêèíîôóúûŠšŽžÅÕõÇÊÎŞÛçşĂÂŢăâţĳÆØæøåÔŴŶÁÉÍÏŵŷÓÚẂÝÀÈÌÒÙẀỲËẄŸẃýì'
         r'òùẁỳẅÿĈĜĤĴŜŬĉĝĥĵŝŭĞİğıÐÞðþŐŰőűŒœãÑñÃẼĨŨỸẽĩũỹĄĘĮŁŃąęįłńǪāēīōǫǭūŲųżćśźůŻČĆĐĎĚŇŘŤŮď'
         r'ěňřťĽĹŔľĺŕĀĒĢĪĶĻŅŌŖŪģķļņŗĖėẢẠẰẲẴẮẶẦẨẪẤẬẺẸỀỂỄẾỆỈỊỎỌỒỔỖỐỘƠỜỞỠỚỢỦỤƯỪỬỮỨỰỶỴđảạằẳẵắặầ'
@@ -53,11 +54,6 @@ abstract class ReusableMethods {
 }
 
 abstract class Verwaltung {
-  static String appVersion = 'alpha 0.1';
-  static String token =
-      ''; //Der Token wird beim Starten der App hinein geladen.
-  static final String url =
-      'https://jugendevent.mainlevel.at/api/'; //For the http requests
   var orgAppConfig = File('OrgAppConfig.txt');
   List<UserTermin> eigeneTermine;
   List<AdminTermin> adminTermine;
@@ -66,8 +62,8 @@ abstract class Verwaltung {
   getZyklen() {}
 
   getMeineTermine() async {
-    var response = await http.get('${Verwaltung.url}meine-termine',
-        headers: {'token': '${Verwaltung.token}'});
+    var response = await http.get('${variables.url}meine-termine',
+        headers: {'token': '${variables.token}'});
     if (response.statusCode == 200) {
       //TODO
     } else {
@@ -98,7 +94,7 @@ abstract class Einloggen {
     try {
       final file = await _localFile;
       // Reads the file.
-      Verwaltung.token = await file.readAsString();
+      variables.token = await file.readAsString();
     } catch (e) {
       throw Exception(
           'Zugriff verweigert, oder Datei $_localFile konnte nicht gefunden werden.');
@@ -106,18 +102,18 @@ abstract class Einloggen {
   }
 
   Future<bool> valtidateToken() async {
-    ReusableMethods.stringPrufung(Verwaltung.token);
+    ReusableMethods.stringPrufung(variables.token);
     var response =
-    await http.get('${Verwaltung.url}/validate?token=${Verwaltung.token}');
+        await http.get('${variables.url}/validate?token=${variables.token}');
     // var response=await http.get('${Verwaltung.url}validate',headers:{'token': '${Verwaltung.token}'});
     /*for debugging*/
     print(response.statusCode);
     if (response.statusCode == 200) {
       return true;
     } else
-      // 401 = Ein solcher Token existiert nicht in der Datenbank.
-      // 403 = Der Token ist abgelaufen bzw. wurde vom User entfernt.
-      //TODO schauen ob writeFile('') den token im file überschreibt, und alle möglichkeiten triggern aka 401/403
+    // 401 = Ein solcher Token existiert nicht in der Datenbank.
+    // 403 = Der Token ist abgelaufen bzw. wurde vom User entfernt.
+    //TODO schauen ob writeFile('') den token im file überschreibt, und alle möglichkeiten triggern aka 401/403
     if (response.statusCode == 401 || response.statusCode == 403) {
       await writeFile('');
       return false;
@@ -128,7 +124,7 @@ abstract class Einloggen {
 
   getEigeneUserDaten() async {
     var response = await http
-        .post('${Verwaltung.url}user', body: {'token': '${Verwaltung.token}'});
+        .post('${variables.url}user', body: {'token': '${variables.token}'});
     if (response.statusCode == 200) {
       //TODO
       print(response.body);
@@ -143,13 +139,13 @@ abstract class Einloggen {
       throw ('Ungültiger UserToken.');
     } else {
       // var url = 'https://jugendevent.mainlevel.at/api/' <- URL in Verwaltung
-      var url = '${Verwaltung.url}link';
+      var url = '${variables.url}link';
       //TODO für model das Handy modell holen und ka was wir mit Name machen.
       var response = await http.post(url, body: {
         'userkey': '$value',
         'name': 'POST',
         'model': '???',
-        'version': '${Verwaltung.appVersion}'
+        'version': '${variables.appVersion}'
       });
 
       // API DOKU SAGT:
@@ -302,7 +298,7 @@ class Admin extends User {
       String portal,
       String anmeldung)
       : super(userint, vorname, nachname, email, plz, ort, typ, jugendgruppe,
-      parent, children, registered) {
+            parent, children, registered) {
     this.dsgvo = dsgvo;
     this.portal = portal;
     this.anmeldung = anmeldung;
@@ -533,18 +529,18 @@ class AdminTermin extends UserTermin {
       List<User> teilnehmer,
       bool freigeschaltet)
       : super(
-      platze,
-      terminid,
-      veranstaltungsid,
-      ort,
-      name,
-      beschreibung,
-      anmeldungStart,
-      anmeldungEnd,
-      timeVon,
-      timeBis,
-      zyklus,
-      teilnehmer) {
+            platze,
+            terminid,
+            veranstaltungsid,
+            ort,
+            name,
+            beschreibung,
+            anmeldungStart,
+            anmeldungEnd,
+            timeVon,
+            timeBis,
+            zyklus,
+            teilnehmer) {
     this.freigeschaltet = freigeschaltet;
   } //formatter:on
 
