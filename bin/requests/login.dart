@@ -1,22 +1,17 @@
+import '../pruefungen.dart' as pruefungen;
 import 'package:http/http.dart' as http;
-import '../objects.dart' as objects;
-import 'debug.dart' as debug;
 import 'variables.dart' as variables;
 import '../objects.dart' as objects;
 import 'dart:convert' as convert;
-import '../pruefungen.dart' as pruefungen;
-
+import 'debug.dart' as debug;
+//formatter:off
 /// Wird zum Einloggen verwendet
 /// value ist der Key der auf der Website generiert werden kann
 void link(String value) async {
-  debug.output(await http.post('${variables.url}/link', body: {
-    'userkey': '$value',
-    'name': 'Dominiks PC',
-    'model': 'ASUS-PC',
-    'version': '0.1'
-  }));
+  debug.output(await http.post('${variables.url}/link', body: {'userkey': '$value',
+    'name': 'Dominiks PC', 'model': 'ASUS-PC', 'version': '0.1'}));
 }
-
+//formatter:on
 // TODO mergen von validateToken & validate
 //  Future<bool> valtidateToken() async {
 //    ReusableMethods.stringPrufung(variables.token);
@@ -42,6 +37,7 @@ void link(String value) async {
 Future<bool> validate() async {
   debug.output(
       await http.get('${variables.url}/validate?token=${variables.token}'));
+  //TODO
   return null;
 }
 
@@ -50,7 +46,6 @@ void login(String value) async {
   if (!a.hasMatch(pruefungen.stringPrufung(value))) {
     throw ('Ungültiger UserToken.');
   } else {
-    // var url = 'https://jugendevent.mainlevel.at/api/' <- URL in Verwaltung
     var url = '${variables.url}link';
     //TODO für model das Handy modell holen und ka was wir mit Name machen.
     var response = await http.post(url, body: {
@@ -74,7 +69,8 @@ void login(String value) async {
   }
 }
 
-// TODO Folgende auskommentierte Methode ist die ursprüngliche requestUser. Sprich requestUser und getEigeneUserDaten müssen noch zusammen gemerged werden
+// TODO Folgende auskommentierte Methode ist die ursprüngliche requestUser. Sprich requestUser
+//TODO  und getEigeneUserDaten müssen noch zusammen gemerged werden
 //getEigeneUserDaten() async {
 //  var response = await http
 //      .post('${variables.url}user', body: {'token': '${variables.token}'});
@@ -87,8 +83,7 @@ void login(String value) async {
 //}
 
 Future<objects.User> requestUser() async {
-  var _response =
-      await http.get('${variables.url}/user?token=${variables.token}');
+  var _response = await http.get('${variables.url}/user?token=${variables.token}');
   var _resp = convert.jsonDecode(_response.body);
   var _user = _resp['data']['user'];
   var _usertyp = _user['typ'];
