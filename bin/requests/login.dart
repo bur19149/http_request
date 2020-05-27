@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'debug.dart' as debug;
 import 'variables.dart' as variables;
-import '../projekt.dart' as projekt;
+import '../objects.dart' as projekt;
 import 'dart:convert' as convert;
 
 
