@@ -5,24 +5,28 @@ import 'requests/variables.dart' as variables;
 import 'pruefungen.dart' as pruefungen;
 
 class User {
+  // -------------------------------- Variablen -------------------------------
+
   // @formatter:off
-  int        _userid;       // einzigartige Id
+  int        _userID;       // einzigartige ID
   String     _jugendgruppe;
   String     _nachname;
   String     _vorname;
   String     _email;
   String     _plz;
   String     _ort;
-  User       _parent;       // (optional) zugeordneter Elternaccount wenn Kind
+  User       parent;        // (optional) zugeordneter Elternaccount wenn Kind
   UserTyp    _typ;
   List<User> _children;     // (optional) zugeordnete Kinder wenn Elternaccount
-  bool       _registered;   // Zweck des Parameters wird in API-Doku nicht erklärt
+  bool       registered;    // Zweck des Parameters wird in API-Doku nicht erklärt
   // @formatter:on
+
+  // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
   ///Constructor
-  User(int userint, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
-    this.userint      = userint;
+  User(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
+    this.userID       = userID;
     this.vorname      = vorname;
     this.nachname     = nachname;
     this.email        = email;
@@ -30,15 +34,15 @@ class User {
     this.ort          = ort;
     this.typ          = typ;
     this.jugendgruppe = jugendgruppe;
-    _parent           = parent;
+    this.parent       = parent;
     this.children     = children;
-    _registered       = registered;
+    this.registered   = registered;
   } // @formatter:on
 
   // --------------------------------- Setter ---------------------------------
 
-  set userint(int value) {
-    _userid = pruefungen.prufeID(value);
+  set userID(int value) {
+    _userID = pruefungen.prufeID(value);
   }
 
   set vorname(String value) {
@@ -104,61 +108,77 @@ class User {
     _children = value;
   }
 
+  // --------------------------------- Getter ---------------------------------
+
+  // @formatter:off
+  int        get userID       => _userID;
+  String     get vorname      => _vorname;
+  String     get nachname     => _nachname;
+  String     get jugendgruppe => _jugendgruppe;
+  String     get plz          => _plz;
+  String     get ort          => _ort;
+  String     get email        => _email;
+  UserTyp    get typ          => _typ;
+  List<User> get children     => _children;
+  // @formatter:on
+
+  // -------------------------------- toString --------------------------------
+
   @override
   String toString() {
-    return super.toString();
+    String str =
+        'Name:         $_vorname $_nachname ($_userID)\nWohnort:      $_ort ($_plz)\nE-Mail:       $_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
+    if (parent != null) {
+      str +=
+          'Elternteil:   ${parent.vorname} ${parent.nachname} (${parent.userID})';
+    }
+    if (_children != null && _children.isNotEmpty) {
+      str += '\nKinder:\n---------------\n';
+      for (User child in _children) {
+        str += '${child.vorname} ${child.nachname} (${child.userID})\n';
+      }
+      str += '---------------\n';
+    }
+    return str;
   }
 }
 
 class Admin extends User {
-  String _dsgvo;
-  String _portal;
-  String _anmeldung;
+  // -------------------------------- Variablen -------------------------------
 
+  String dsgvo;
+  String portal;
+  String anmeldung;
+
+  // ----------------------------- Konstruktoren ------------------------------
+
+  // @formatter:off
   ///Constructor
-
-  Admin(
-      int userint,
-      String vorname,
-      String nachname,
-      String email,
-      String plz,
-      String ort,
-      UserTyp typ,
-      String jugendgruppe,
-      User parent,
-      List<User> children,
-      bool registered,
-      String dsgvo,
-      String portal,
-      String anmeldung)
-      : super(userint, vorname, nachname, email, plz, ort, typ, jugendgruppe,
-            parent, children, registered) {
-    this.dsgvo = dsgvo;
-    this.portal = portal;
+  Admin(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe,
+      User parent, List<User> children, bool registered, String dsgvo, String portal, String anmeldung)
+      : super(userID, vorname, nachname, email, plz, ort, typ, jugendgruppe, parent, children, registered) {
+    this.dsgvo     = dsgvo;
+    this.portal    = portal;
     this.anmeldung = anmeldung;
-  }
+  } // @formatter:on
 
-  ///Setter
+  // -------------------------------- toString --------------------------------
 
-  set dsgvo(String value) {
-    _dsgvo = pruefungen.prufeName(pruefungen.stringPrufung(value));
-  }
-
-  set anmeldung(String value) {
-    _anmeldung = pruefungen.prufeName(pruefungen.stringPrufung(value));
-  }
-
-  set portal(String value) {
-    _portal = pruefungen.prufeName(pruefungen.stringPrufung(value));
-  }
+  // @formatter:off
+  @override
+  String toString() {
+    return super.toString() +
+        (dsgvo     != null && dsgvo.isNotEmpty     ? 'DSGVO:        $dsgvo\n'     : '') +
+        (anmeldung != null && anmeldung.isNotEmpty ? 'Anmeldung:    $anmeldung\n' : '') +
+        (portal    != null && portal.isNotEmpty    ? 'Portal:       $portal'      : '');
+  } // @formatter:on
 }
 
 class UserTyp {
   // -------------------------------- Variablen -------------------------------
 
   // @formatter:off
-  int              _typid;       // ID des Typs
+  int              _typID;       // ID des Typs
   String           _name;        // Bezeichnung des Usertyps z. B. Admin
   List<Permission> _permissions; // Liste der Berechtigungen
   // @formatter:on
@@ -166,8 +186,8 @@ class UserTyp {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
-  UserTyp(int typid, String name, List<Permission> permission) {
-    this.typID       = typid;
+  UserTyp(int typID, String name, List<Permission> permission) {
+    this.typID       = typID;
     this.name        = name;
     this.permissions = permission;
   } // @formatter:on
@@ -175,7 +195,7 @@ class UserTyp {
   // --------------------------------- Setter ---------------------------------
 
   set typID(int value) {
-    _typid = pruefungen.prufeID(value);
+    _typID = pruefungen.prufeID(value);
   }
 
   set name(String value) {
@@ -190,12 +210,20 @@ class UserTyp {
     }
   }
 
+  // --------------------------------- Getter ---------------------------------
+
+  // @formatter:off
+  int              get typID       => _typID;
+  String           get name        => _name;
+  List<Permission> get permissions => _permissions;
+  // @formatter:on
+
   // -------------------------------- toString --------------------------------
 
   @override
   String toString() {
-    String str = 'User-Typ: $_name ($_typid)\nBerechtigungen:\n---------------\n';
-    for(Permission p in _permissions) {
+    String str = 'User-Typ:     $_name ($_typID)\nBerechtigungen:\n---------------\n';
+    for (Permission p in _permissions) {
       str += p.toString() + '\n---------------\n';
     }
     return str;
@@ -206,9 +234,9 @@ class Permission {
   // -------------------------------- Variablen -------------------------------
 
   // @formatter:off
-  int    _permissionid; // einzigartige ID
-  String _description;  // Beschreibung der Berechtigung
-  String _name;
+  int    _permissionID; // einzigartige ID
+  String description;   // Beschreibung der Berechtigung
+  String name;
   String _code;         // Berechtigungscode z. B. termin.bearbeiten
   // @formatter:on
 
@@ -217,26 +245,33 @@ class Permission {
   // @formatter:off
   Permission(int permissionID, String name, String description, String code) {
     this.permissionID = permissionID;
-    _name             = name;
-    _description      = description;
+    this.name         = name;
+    this.description  = description;
     this.code         = code;
   } // @formatter:on
 
   // --------------------------------- Setter ---------------------------------
 
   set permissionID(int value) {
-    _permissionid = pruefungen.prufeID(value);
+    _permissionID = pruefungen.prufeID(value);
   }
 
   set code(String value) {
     _code = pruefungen.stringPrufung(value);
   }
 
+  // --------------------------------- Getter ---------------------------------
+
+  // @formatter:off
+  int    get permissionID => _permissionID;
+  String get code         => _code;
+  // @formatter:on
+
   // -------------------------------- toString --------------------------------
 
   @override
   String toString() {
-    return 'Berechtigung: $_name ($_permissionid)\nBeschreibung: $_description\nCode:         $_code';
+    return 'Berechtigung: $name ($_permissionID)\nBeschreibung: $description\nCode:         $_code';
   }
 }
 
