@@ -2,6 +2,10 @@ import 'package:http_request/http_request.dart' as http_request;
 import 'objects.dart' as objects;
 
 main(List<String> arguments) {
+//  objects.UserTermin(10, 1, 2, 'Wien', 'Freibier für Alle', 'Saufgelage', DateTime(2020), DateTime(2020), DateTime(2020));
+
+
+
   /*
   print(objects.Admin(
       1,

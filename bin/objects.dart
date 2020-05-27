@@ -276,48 +276,45 @@ class Permission {
 }
 
 class UserTermin {
-  int _platze;
-  int _terminid;
-  int _veranstaltungsid;
-  String _ort;
-  String _name;
-  String _beschreibung;
-  DateTime _anmeldungStart;
-  DateTime _anmeldungEnde;
-  DateTime _timeVon;
-  DateTime _timeBis;
-  Zyklus _zyklus;
-  List<User> _teilnehmer;
 
-  ///Constructor
-  //formatter:off
-  UserTermin(int platze,
-      int terminid,
-      int veranstaltungsid,
-      String ort,
-      String name,
-      String beschreibung,
-      DateTime anmeldungStart,
-      DateTime anmeldungEnd,
-      DateTime timeVon,
-      DateTime timeBis,
-      Zyklus zyklus,
-      List<User> teilnehmer) {
-    this.platze = platze;
-    this.terminID = terminid;
-    this.veranstaltungsid = veranstaltungsid;
-    this.ort = ort;
-    this.name = name;
-    this.beschreibung = beschreibung;
-    this.anmeldungStart = anmeldungStart;
-    this.anmeldungEnde = anmeldungEnd;
-    this.timeVon = timeVon;
-    this.timeBis = timeBis;
-    this.zyklus = zyklus;
-    this.teilnehmer = teilnehmer;
+  // -------------------------------- Variablen -------------------------------
+
+  // @formatter:off
+  int        _plaetze;
+  int        _terminID;
+  int        _veranstaltungsID;
+  String     _ort;
+  String     _name;
+  String     _beschreibung;
+  DateTime   _anmeldungStart;
+  DateTime   _anmeldungEnde;
+  DateTime   _timeVon;
+  DateTime   _timeBis;
+  Zyklus     _zyklus;
+  List<User> teilnehmer;
+  // @formatter:on
+
+  // ----------------------------- Konstruktoren ------------------------------
+
+  // @formatter:off
+  /// Konstruktor
+  UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name, String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd,
+      DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<User> teilnehmer) {
+    this.plaetze           = plaetze;
+    this.terminID         = terminID;
+    this.veranstaltungsID = veranstaltungsID;
+    this.ort              = ort;
+    this.name             = name;
+    this.beschreibung     = beschreibung;
+    this.anmeldungStart   = anmeldungStart;
+    this.anmeldungEnde    = anmeldungEnd;
+    this.timeVon          = timeVon;
+    this.timeBis          = timeBis;
+    this.zyklus           = zyklus;
+    this.teilnehmer       = teilnehmer;
   } //formatter:on
 
-  ///Setter
+  // --------------------------------- Setter ---------------------------------
 
   set anmeldungStart(DateTime value) {
     if (value == null) {
@@ -363,21 +360,21 @@ class UserTermin {
     }
   }
 
-  ///Die maximale platzanzahl auf der Website ist 99
-  set platze(int value) {
+  /// Die maximale platzanzahl auf der Website ist 99
+  set plaetze(int value) {
     if (value < 1 || value > 99) {
       throw Exception('Die Platzanzahl ist ungültig.');
     } else {
-      _platze = value;
+      _plaetze = value;
     }
   }
 
   set terminID(int value) {
-    _terminid = pruefungen.prufeID(value);
+    _terminID = pruefungen.prufeID(value);
   }
 
-  set veranstaltungsid(int value) {
-    _veranstaltungsid = pruefungen.prufeID(value);
+  set veranstaltungsID(int value) {
+    _veranstaltungsID = pruefungen.prufeID(value);
   }
 
   set ort(String value) {
@@ -400,69 +397,190 @@ class UserTermin {
     }
   }
 
-  //Es darf Null übergeben werden weil sich auch keiner anmelden kann.
-  set teilnehmer(List<User> value) {
-    _teilnehmer = value;
+  // --------------------------------- Getter ---------------------------------
+
+  // @formatter:off
+  int      get plaetze          => _plaetze;
+  int      get terminID         => _terminID;
+  int      get veranstaltungsID => _veranstaltungsID;
+  String   get ort              => _ort;
+  String   get name             => _name;
+  String   get beschreibung     => _beschreibung;
+  DateTime get anmeldungStart   => _anmeldungStart;
+  DateTime get anmeldungEnde    => _anmeldungEnde;
+  DateTime get timeVon          => _timeVon;
+  DateTime get timeBis          => _timeBis;
+  Zyklus   get zyklus           => _zyklus;
+  // @formatter:on
+
+  // -------------------------------- toString --------------------------------
+
+  @override
+  String toString() {
+    String str = 'Termin: $_name ($_terminID)\nAnzahl Plätze: $_plaetze\nOrt: $ort\nBeschreibung: $_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart: $_anmeldungStart\nAnmeldeschluss: $_anmeldungEnde\nUhrzeit: $_timeVon - $_timeBis\n{$_zyklus}';
+    if (teilnehmer.isNotEmpty) {
+      str += '\nTeilnehmer:\n---------------\n';
+      for (User user in teilnehmer) {
+        str += '${user.vorname} ${user.nachname} (${user.userID})\n';
+      }
+      str += '\n---------------\n';
+    }
+    return str;
   }
 }
 
 class AdminTermin extends UserTermin {
-  bool _freigeschaltet;
 
-  ///Constructor
-  //formatter:off
-  AdminTermin(int platze,
-      int terminid,
-      int veranstaltungsid,
-      String ort,
-      String name,
-      String beschreibung,
-      DateTime anmeldungStart,
-      DateTime anmeldungEnd,
-      DateTime timeVon,
-      DateTime timeBis,
-      Zyklus zyklus,
-      List<User> teilnehmer,
-      bool freigeschaltet)
-      : super(
-      platze,
-      terminid,
-      veranstaltungsid,
-      ort,
-      name,
-      beschreibung,
-      anmeldungStart,
-      anmeldungEnd,
-      timeVon,
-      timeBis,
-      zyklus,
-      teilnehmer) {
+  // -------------------------------- Variablen -------------------------------
+
+  bool freigeschaltet;
+
+  // ----------------------------- Konstruktoren ------------------------------
+
+  // @formatter:off
+  /// Konstructor
+  AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name, String beschreibung, DateTime anmeldungStart,
+      DateTime anmeldungEnd, DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<User> teilnehmer, bool freigeschaltet)
+      : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart, anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {
     this.freigeschaltet = freigeschaltet;
-  } //formatter:on
+  } // @formatter:on
 
-  ///Setter
+  // -------------------------------- toString --------------------------------
 
-  set freigeschaltet(bool value) {
-    _freigeschaltet = value;
+  @override
+  String toString() {
+    return super.toString() + 'freigeschaltet: $freigeschaltet';
   }
 }
 
 class Zyklus {
-  int _zyklusid;
+
+  // -------------------------------- Variablen -------------------------------
+
+  // @formatter:off
+  int   _zyklusID;
   String _name;
+  // @formatter:on
 
-  Zyklus(int zyklusid, String name) {
-    this.zyklusID = zyklusid;
-    this.name = name;
-  }
+  // ----------------------------- Konstruktoren ------------------------------
 
-  ///Setter
+  // @formatter:off
+  /// Konstruktor
+  Zyklus(int zyklusID, String name) {
+    this.zyklusID = zyklusID;
+    this.name     = name;
+  } // @formatter:on
+
+  // --------------------------------- Setter ---------------------------------
 
   set zyklusID(int value) {
-    _zyklusid = pruefungen.prufeID(value);
+    _zyklusID = pruefungen.prufeID(value);
   }
 
   set name(String value) {
     _name = pruefungen.prufeName(pruefungen.stringPrufung(value));
+  }
+
+  // --------------------------------- Getter ---------------------------------
+
+  // @formatter:off
+  int    get zyklusID => _zyklusID;
+  String get name     => _name;
+  // @formatter:on
+
+  // -------------------------------- toString --------------------------------
+
+  @override
+  String toString() {
+    return 'Zyklus: $_name ($_zyklusID)';
+  }
+}
+
+class Antwort {
+
+  // -------------------------------- Variablen -------------------------------
+
+  // @formatter:off
+  int    _id;
+  String _name;
+  // @formatter:on
+
+  // ----------------------------- Konstruktoren ------------------------------
+
+  // @formatter:off
+  /// Konstruktor
+  Antwort(int id, String name){
+    this.id = id;
+    this.name = name;
+  } // @formatter:on
+
+  // --------------------------------- Setter ---------------------------------
+
+  set id(int id) {
+    _id = id;
+  }
+
+  set name(String name) {
+    _name = name;
+  }
+
+  // --------------------------------- Getter ---------------------------------
+
+  // @formatter:off
+  int    get id   => _id;
+  String get name => _name;
+  // @formatter:on
+
+  // -------------------------------- toString --------------------------------
+
+  @override
+  String toString() {
+    return 'Antwort: $_name ($_id)';
+  }
+}
+
+class TerminAntwort {
+
+  // -------------------------------- Variablen -------------------------------
+
+  // @formatter:off
+  User    _user;
+  Antwort _antwort;
+  String  kommentar;
+  // @formatter:on
+
+  // ----------------------------- Konstruktoren ------------------------------
+
+  // @formatter:off
+  /// Konstruktor
+  TerminAntwort(User user, Antwort antwort, String kommentar) {
+    this.user      = user;
+    this.antwort   = antwort;
+    this.kommentar = kommentar;
+  } // @formatter:on
+
+  // --------------------------------- Setter ---------------------------------
+
+  set user(User user) {
+    _user = user;
+  }
+
+  set antwort(Antwort antwort) {
+    _antwort = antwort;
+  }
+
+  // --------------------------------- Getter ---------------------------------
+
+  // @formatter:off
+  User    get user    => _user;
+  Antwort get antwort => _antwort;
+  // @formatter:on
+
+  // -------------------------------- toString --------------------------------
+
+  @override
+  String toString() {
+    return 'Termin-Antwort: ${_user.vorname} ${_user.nachname} (${_user
+        .userID})\n${_antwort}';
   }
 }
