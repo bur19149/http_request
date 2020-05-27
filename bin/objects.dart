@@ -284,14 +284,14 @@ class UserTermin {
   int        _terminID;
   int        _veranstaltungsID;
   String     _ort;
-  String     _name;
+  String     name;
   String     _beschreibung;
   DateTime   _anmeldungStart;
   DateTime   _anmeldungEnde;
   DateTime   _timeVon;
   DateTime   _timeBis;
   Zyklus     _zyklus;
-  List<User> teilnehmer;
+  List<AntwortTermin> teilnehmer;
   // @formatter:on
 
   // ----------------------------- Konstruktoren ------------------------------
@@ -299,7 +299,7 @@ class UserTermin {
   // @formatter:off
   /// Konstruktor
   UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name, String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd,
-      DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<User> teilnehmer) {
+      DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer) {
     this.plaetze           = plaetze;
     this.terminID         = terminID;
     this.veranstaltungsID = veranstaltungsID;
@@ -353,7 +353,7 @@ class UserTermin {
   set timeBis(DateTime value) {
     if (value == null) {
       throw ('Error:Das Datum ist Null.');
-    } else if (_timeVon != null && value.isBefore(_timeBis)) {
+    } else if (_timeVon != null && value.isBefore(_timeVon)) {
       throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
     } else {
       _timeBis = value;
@@ -381,10 +381,6 @@ class UserTermin {
     _ort = pruefungen.prufeOrt(pruefungen.stringPrufung(value));
   }
 
-  set name(String value) {
-    _name = pruefungen.prufeName(pruefungen.stringPrufung(value));
-  }
-
   set beschreibung(String value) {
     _beschreibung = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
@@ -404,7 +400,6 @@ class UserTermin {
   int      get terminID         => _terminID;
   int      get veranstaltungsID => _veranstaltungsID;
   String   get ort              => _ort;
-  String   get name             => _name;
   String   get beschreibung     => _beschreibung;
   DateTime get anmeldungStart   => _anmeldungStart;
   DateTime get anmeldungEnde    => _anmeldungEnde;
@@ -417,13 +412,12 @@ class UserTermin {
 
   @override
   String toString() {
-    String str = 'Termin: $_name ($_terminID)\nAnzahl Plätze: $_plaetze\nOrt: $ort\nBeschreibung: $_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart: $_anmeldungStart\nAnmeldeschluss: $_anmeldungEnde\nUhrzeit: $_timeVon - $_timeBis\n{$_zyklus}';
+    String str = 'Termin:            $name ($_terminID)\nAnzahl Plätze:     $_plaetze\nOrt:               $ort\nBeschreibung:      $_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart:      $_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           $_timeVon - $_timeBis\n$_zyklus';
     if (teilnehmer.isNotEmpty) {
       str += '\nTeilnehmer:\n---------------\n';
-      for (User user in teilnehmer) {
-        str += '${user.vorname} ${user.nachname} (${user.userID})\n';
+      for (AntwortTermin antwortTermin in teilnehmer) {
+        str += '$antwortTermin\n---------------\n';
       }
-      str += '\n---------------\n';
     }
     return str;
   }
@@ -440,7 +434,7 @@ class AdminTermin extends UserTermin {
   // @formatter:off
   /// Konstructor
   AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name, String beschreibung, DateTime anmeldungStart,
-      DateTime anmeldungEnd, DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<User> teilnehmer, bool freigeschaltet)
+      DateTime anmeldungEnd, DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet)
       : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart, anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {
     this.freigeschaltet = freigeschaltet;
   } // @formatter:on
@@ -449,7 +443,7 @@ class AdminTermin extends UserTermin {
 
   @override
   String toString() {
-    return super.toString() + 'freigeschaltet: $freigeschaltet';
+    return super.toString() + 'freigeschaltet:    $freigeschaltet';
   }
 }
 
@@ -492,7 +486,7 @@ class Zyklus {
 
   @override
   String toString() {
-    return 'Zyklus: $_name ($_zyklusID)';
+    return 'Zyklus:            $_name ($_zyklusID)';
   }
 }
 
@@ -535,17 +529,18 @@ class Antwort {
 
   @override
   String toString() {
-    return 'Antwort: $_name ($_id)';
+    return 'Antwort:      $_name ($_id)';
   }
 }
 
-class TerminAntwort {
+class AntwortTermin {
 
   // -------------------------------- Variablen -------------------------------
 
   // @formatter:off
   User    _user;
-  Antwort _antwort;
+  Antwort _antwortUser;
+  Antwort _antwortLeiter;
   String  kommentar;
   // @formatter:on
 
@@ -553,10 +548,11 @@ class TerminAntwort {
 
   // @formatter:off
   /// Konstruktor
-  TerminAntwort(User user, Antwort antwort, String kommentar) {
-    this.user      = user;
-    this.antwort   = antwort;
-    this.kommentar = kommentar;
+  AntwortTermin(User user, Antwort antwortUser, Antwort antwortLeiter, String kommentar) {
+    this.user          = user;
+    this.antwortUser   = antwortUser;
+    this.antwortLeiter = antwortLeiter;
+    this.kommentar     = kommentar;
   } // @formatter:on
 
   // --------------------------------- Setter ---------------------------------
@@ -565,22 +561,27 @@ class TerminAntwort {
     _user = user;
   }
 
-  set antwort(Antwort antwort) {
-    _antwort = antwort;
+  set antwortUser(Antwort antwortUser) {
+    _antwortUser = antwortUser;
+  }
+
+  set antwortLeiter(Antwort antwortLeiter) {
+    _antwortLeiter = antwortLeiter;
   }
 
   // --------------------------------- Getter ---------------------------------
 
   // @formatter:off
-  User    get user    => _user;
-  Antwort get antwort => _antwort;
+  User    get user          => _user;
+  Antwort get antwortUser   => _antwortUser;
+  Antwort get antwortLeiter => _antwortLeiter;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
 
   @override
   String toString() {
-    return 'Termin-Antwort: ${_user.vorname} ${_user.nachname} (${_user
-        .userID})\n${_antwort}';
+    return 'Termin-Antwort:    ${_user.vorname} ${_user.nachname} (${_user
+        .userID})\nKommentar:         $kommentar\nUser-${_antwortUser}\nLeit-${_antwortLeiter}';
   }
 }
