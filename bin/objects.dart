@@ -15,9 +15,9 @@ class User {
   String     _email;
   String     _plz;
   String     _ort;
-  User       parent;        // (optional) zugeordneter Elternaccount wenn Kind
+  int        parent;        // (optional) zugeordneter Elternaccount wenn Kind
   UserTyp    _typ;
-  List<User> _children;     // (optional) zugeordnete Kinder wenn Elternaccount
+  List<int>  _children;     // (optional) zugeordnete Kinder wenn Elternaccount
   bool       registered;    // Zweck des Parameters wird in API-Doku nicht erklärt
   // @formatter:on
 
@@ -26,7 +26,7 @@ class User {
   // @formatter:off
   /// Konstruktor
   User(int userID, String vorname, String nachname, String email, String plz, String ort,
-      UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
+      UserTyp typ, String jugendgruppe, int parent, List<int> children, bool registered) {
     this.userID       = userID;
     this.vorname      = vorname;
     this.nachname     = nachname;
@@ -105,7 +105,7 @@ class User {
   }
 
   ///Es darf Null übergeben werden da ein User auch keine kinder haben kann.
-  set children(List<User> value) {
+  set children(List<int> value) {
     _children = value;
   }
 
@@ -120,7 +120,7 @@ class User {
   String     get ort          => _ort;
   String     get email        => _email;
   UserTyp    get typ          => _typ;
-  List<User> get children     => _children;
+  List<int>  get children     => _children;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
@@ -132,12 +132,12 @@ class User {
         '$_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
     if (parent != null) {
       str +=
-          'Elternteil:   ${parent.vorname} ${parent.nachname} (${parent.userID})';
+          'Elternteil:   $parent';
     }
     if (_children != null && _children.isNotEmpty) {
       str += '\nKinder:\n---------------\n';
-      for (User child in _children) {
-        str += '${child.vorname} ${child.nachname} (${child.userID})\n';
+      for (int child in _children) {
+        str += '$child\n';
       }
       str += '---------------\n';
     }
@@ -157,7 +157,7 @@ class Admin extends User {
   // @formatter:off
   /// Konstruktor
   Admin(int userID, String vorname, String nachname, String email, String plz, String ort,
-      UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered,
+      UserTyp typ, String jugendgruppe, int parent, List<int> children, bool registered,
       String dsgvo, String portal, String anmeldung) : super(userID, vorname, nachname, email,
       plz, ort, typ, jugendgruppe, parent, children, registered) {
     this.dsgvo     = dsgvo;
