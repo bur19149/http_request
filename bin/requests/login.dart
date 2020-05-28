@@ -10,9 +10,14 @@ import 'debug.dart' as debug;
 /// Wird zum Einloggen verwendet
 /// value ist der Key der auf der Website generiert werden kann
 void link(String value) async {
-  debug.output(await http.post('${variables.url}/link', body: {'userkey': '$value',
-    'name': 'Dominiks PC', 'model': 'ASUS-PC', 'version': '0.1'}));
+  debug.output(await http.post('${variables.url}/link', body: {
+    'userkey': '$value',
+    'name': 'Dominiks PC',
+    'model': 'ASUS-PC',
+    'version': '0.1'
+  }));
 }
+
 //formatter:on
 // TODO mergen von validateToken & validate
 //  Future<bool> valtidateToken() async {
@@ -71,20 +76,13 @@ void login(String value) async {
   }
 }
 
-// TODO Folgende auskommentierte Methode ist die ursprüngliche requestUser. Sprich requestUser
-//TODO  und getEigeneUserDaten müssen noch zusammen gemerged werden
-//getEigeneUserDaten() async {
-//  var response = await http
-//      .post('${variables.url}user', body: {'token': '${variables.token}'});
-//  if (response.statusCode == 200) {
-//    //TODO
-//    print(response.body);
-//  }
-//  throw Exception(
-//      'unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
-//}
-
 Future<objects.User> requestUser() async {
-  var _response = await http.get('${variables.url}/user?token=${variables.token}');
-  return converter.jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
+  var _response =
+      await http.get('${variables.url}/user?token=${variables.token}');
+  if (_response.statusCode != 200) {
+    throw Exception(
+        'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+  }
+  return converter
+      .jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
 }
