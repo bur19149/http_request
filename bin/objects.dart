@@ -24,7 +24,7 @@ class User {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
-  ///Constructor
+  /// Konstruktor
   User(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
     this.userID       = userID;
     this.vorname      = vorname;
@@ -153,7 +153,7 @@ class Admin extends User {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
-  ///Constructor
+  /// Konstruktor
   Admin(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe,
       User parent, List<User> children, bool registered, String dsgvo, String portal, String anmeldung)
       : super(userID, vorname, nachname, email, plz, ort, typ, jugendgruppe, parent, children, registered) {
@@ -186,6 +186,7 @@ class UserTyp {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
+  /// Konstruktor
   UserTyp(int typID, String name, List<Permission> permission) {
     this.typID       = typID;
     this.name        = name;
@@ -243,6 +244,7 @@ class Permission {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
+  /// Konstruktor
   Permission(int permissionID, String name, String description, String code) {
     this.permissionID = permissionID;
     this.name         = name;
@@ -360,7 +362,7 @@ class UserTermin {
     }
   }
 
-  /// Die maximale platzanzahl auf der Website ist 99
+  /// Die maximale Anzahl Plätze auf der Website ist 99.
   set plaetze(int value) {
     if (value < 1 || value > 99) {
       throw Exception('Die Platzanzahl ist ungültig.');
@@ -432,7 +434,7 @@ class AdminTermin extends UserTermin {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
-  /// Konstructor
+  /// Konstruktor
   AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name, String beschreibung, DateTime anmeldungStart,
       DateTime anmeldungEnd, DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet)
       : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart, anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {

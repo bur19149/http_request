@@ -1,5 +1,5 @@
 import 'objects.dart' as objects;
 
-objects.User jsonToUser(){
+objects.User jsonToUser(var jsonAlsListe){
 
 }
