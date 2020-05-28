@@ -4,8 +4,7 @@ import 'requests/login.dart' as login;
 
 main(List<String> arguments) async {
 
-print('\n\n${await login.requestUser()}');
-
+print('${await login.requestUser()}');
 
 
 

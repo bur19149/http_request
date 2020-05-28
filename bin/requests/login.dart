@@ -1,5 +1,6 @@
 import '../pruefungen.dart' as pruefungen;
 import 'package:http/http.dart' as http;
+import '../converter.dart' as converter;
 import 'variables.dart' as variables;
 import '../objects.dart' as objects;
 import 'dart:convert' as convert;
@@ -85,34 +86,5 @@ void login(String value) async {
 
 Future<objects.User> requestUser() async {
   var _response = await http.get('${variables.url}/user?token=${variables.token}');
-  var _resp = convert.jsonDecode(_response.body);
-  var _user = _resp['data']['user'];
-  var _usertyp = _user['typ'];
-
-  var permissions = <objects.Permission>[];
-  for (var p in _usertyp['permissions']) {
-    permissions.add(objects.Permission(
-        p['permissionid'], p['name'], p['description'], p['code']));
-  }
-
-//  var children = <projekt.User>[];
-
-  print(_user.toString() + '\n\n\n-----------------------------------------------\n\n\n' +
-      _resp.toString() +
-      '\n\n\n-----------------------------------------------\n\n\n');
-  debug.output(_response);
-
-  return objects.User(
-      _user['userid'],
-      _user['vorname'],
-      _user['nachname'],
-      _user['email'],
-      _user['plz'],
-      _user['ort'],
-      objects.UserTyp(_usertyp['typid'], _usertyp['name'], permissions),
-      _user['jugendgruppe'],
-      _user['parent'],
-//          List(_user['children']),
-      null,
-      _user['registered']);
+  return converter.jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
 }
