@@ -1,8 +1,8 @@
-import 'requests/variables.dart' as variables;
 //import 'package:path_provider/path_provider.dart';
-import 'pruefungen.dart' as pruefungen;
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'requests/variables.dart' as variables;
+import 'pruefungen.dart' as pruefungen;
 
 class User {
   // -------------------------------- Variablen -------------------------------
@@ -24,9 +24,8 @@ class User {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
-  ///Constructor
-  User(int userID, String vorname, String nachname, String email, String plz, String ort,
-      UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
+  /// Konstruktor
+  User(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
     this.userID       = userID;
     this.vorname      = vorname;
     this.nachname     = nachname;
@@ -58,7 +57,8 @@ class User {
     _jugendgruppe = pruefungen.stringPrufung(value);
   }
 
-  set plz(String value) {//wann man "value" auf int setzt schreit der DUMME kompiler.
+  set plz(String value) {
+    //wann man "value" auf int setzt schreit der DUMME kompiler.
     var megaGay = int.parse(pruefungen.stringPrufung(value)); //workaround
     if (megaGay < 1010 || megaGay > 9992) {
       throw ('Die Postleitzahl ist ungültig.');
@@ -73,7 +73,7 @@ class User {
 
   set typ(UserTyp value) {
     if (value == null) {
-      throw Exception('Null übergabe.');
+      throw Exception('Null übergabe');
     } else {
       _typ = value;
     }
@@ -126,11 +126,11 @@ class User {
 
   @override
   String toString() {
-    String str = 'Name:         $_vorname $_nachname ($_userID)\nWohnort:      '
-        '$_ort ($_plz)\nE-Mail:       $_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  '
-        '$registered\n${_typ.toString()}';
+    String str =
+        'Name:         $_vorname $_nachname ($_userID)\nWohnort:      $_ort ($_plz)\nE-Mail:       $_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
     if (parent != null) {
-      str += 'Elternteil:   ${parent.vorname} ${parent.nachname} (${parent.userID})';
+      str +=
+          'Elternteil:   ${parent.vorname} ${parent.nachname} (${parent.userID})';
     }
     if (_children != null && _children.isNotEmpty) {
       str += '\nKinder:\n---------------\n';
@@ -153,11 +153,10 @@ class Admin extends User {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
-  ///Constructor
-  Admin(int userID, String vorname, String nachname, String email, String plz, String ort,
-      UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered,
-      String dsgvo, String portal, String anmeldung)
-    :super(userID, vorname, nachname, email, plz, ort, typ, jugendgruppe, parent, children, registered) {
+  /// Konstruktor
+  Admin(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe,
+      User parent, List<User> children, bool registered, String dsgvo, String portal, String anmeldung)
+      : super(userID, vorname, nachname, email, plz, ort, typ, jugendgruppe, parent, children, registered) {
     this.dsgvo     = dsgvo;
     this.portal    = portal;
     this.anmeldung = anmeldung;
@@ -187,6 +186,7 @@ class UserTyp {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
+  /// Konstruktor
   UserTyp(int typID, String name, List<Permission> permission) {
     this.typID       = typID;
     this.name        = name;
@@ -244,6 +244,7 @@ class Permission {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
+  /// Konstruktor
   Permission(int permissionID, String name, String description, String code) {
     this.permissionID = permissionID;
     this.name         = name;
@@ -285,23 +286,22 @@ class UserTermin {
   int        _terminID;
   int        _veranstaltungsID;
   String     _ort;
-  String     _name;
+  String     name;
   String     _beschreibung;
   DateTime   _anmeldungStart;
   DateTime   _anmeldungEnde;
   DateTime   _timeVon;
   DateTime   _timeBis;
   Zyklus     _zyklus;
-  List<User> teilnehmer;
+  List<AntwortTermin> teilnehmer;
   // @formatter:on
 
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
   /// Konstruktor
-  UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name,
-      String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
-      DateTime timeBis, Zyklus zyklus, List<User> teilnehmer) {
+  UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name, String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd,
+      DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer) {
     this.plaetze           = plaetze;
     this.terminID         = terminID;
     this.veranstaltungsID = veranstaltungsID;
@@ -320,11 +320,11 @@ class UserTermin {
 
   set anmeldungStart(DateTime value) {
     if (value == null) {
-      throw ('Error: Das Datum ist Null.');
+      throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isAfter(_timeBis)) {
-      throw ('Error: Das Datum ist nach dem Ende.');
+      throw ('Error:Das Datum ist nach dem Ende.');
     } else if (value.isBefore(DateTime.now())) {
-      throw ('Der Termin darf nicht in der Verganganheit stattfinden.');
+      throw ('Der Termin darf nicht in der Verganganheit stattfinden');
     } else {
       _anmeldungStart = value;
     }
@@ -332,7 +332,7 @@ class UserTermin {
 
   set anmeldungEnde(DateTime value) {
     if (value == null) {
-      throw ('Error: Das Datum ist Null.');
+      throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isBefore(_timeVon)) {
       throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
     } else {
@@ -342,11 +342,11 @@ class UserTermin {
 
   set timeVon(DateTime value) {
     if (value == null) {
-      throw ('Error: Das Datum ist Null.');
+      throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isAfter(_timeBis)) {
-      throw ('Error: Das Datum ist nach dem Ende.');
+      throw ('Error:Das Datum ist nach dem Ende.');
     } else if (value.isBefore(DateTime.now())) {
-      throw ('Der Termin darf nicht in der Verganganheit stattfinden.');
+      throw ('Der Termin darf nicht in der Verganganheit stattfinden');
     } else {
       _timeVon = value;
     }
@@ -355,14 +355,14 @@ class UserTermin {
   set timeBis(DateTime value) {
     if (value == null) {
       throw ('Error:Das Datum ist Null.');
-    } else if (_timeVon != null && value.isBefore(_timeBis)) {
+    } else if (_timeVon != null && value.isBefore(_timeVon)) {
       throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
     } else {
       _timeBis = value;
     }
   }
 
-  /// Die maximale platzanzahl auf der Website ist 99
+  /// Die maximale Anzahl Plätze auf der Website ist 99.
   set plaetze(int value) {
     if (value < 1 || value > 99) {
       throw Exception('Die Platzanzahl ist ungültig.');
@@ -381,10 +381,6 @@ class UserTermin {
 
   set ort(String value) {
     _ort = pruefungen.prufeOrt(pruefungen.stringPrufung(value));
-  }
-
-  set name(String value) {
-    _name = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
   set beschreibung(String value) {
@@ -406,7 +402,6 @@ class UserTermin {
   int      get terminID         => _terminID;
   int      get veranstaltungsID => _veranstaltungsID;
   String   get ort              => _ort;
-  String   get name             => _name;
   String   get beschreibung     => _beschreibung;
   DateTime get anmeldungStart   => _anmeldungStart;
   DateTime get anmeldungEnde    => _anmeldungEnde;
@@ -419,16 +414,12 @@ class UserTermin {
 
   @override
   String toString() {
-    String str = 'Termin: $_name ($_terminID)\nAnzahl Plätze: $_plaetze\nOrt: $ort\nBeschreibung: '
-        '$_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart: '
-        '$_anmeldungStart\nAnmeldeschluss: $_anmeldungEnde\nUhrzeit: $_timeVon - '
-        '$_timeBis\n{$_zyklus}';
+    String str = 'Termin:            $name ($_terminID)\nAnzahl Plätze:     $_plaetze\nOrt:               $ort\nBeschreibung:      $_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart:      $_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           $_timeVon - $_timeBis\n$_zyklus';
     if (teilnehmer.isNotEmpty) {
       str += '\nTeilnehmer:\n---------------\n';
-      for (User user in teilnehmer) {
-        str += '${user.vorname} ${user.nachname} (${user.userID})\n';
+      for (AntwortTermin antwortTermin in teilnehmer) {
+        str += '$antwortTermin\n---------------\n';
       }
-      str += '\n---------------\n';
     }
     return str;
   }
@@ -443,12 +434,10 @@ class AdminTermin extends UserTermin {
   // ----------------------------- Konstruktoren ------------------------------
 
   // @formatter:off
-  /// Konstructor
-  AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name,
-      String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
-      DateTime timeBis, Zyklus zyklus, List<User> teilnehmer, bool freigeschaltet)
-      : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart,
-      anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {
+  /// Konstruktor
+  AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name, String beschreibung, DateTime anmeldungStart,
+      DateTime anmeldungEnd, DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet)
+      : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart, anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {
     this.freigeschaltet = freigeschaltet;
   } // @formatter:on
 
@@ -456,7 +445,7 @@ class AdminTermin extends UserTermin {
 
   @override
   String toString() {
-    return super.toString() + 'freigeschaltet: $freigeschaltet';
+    return super.toString() + 'freigeschaltet:    $freigeschaltet';
   }
 }
 
@@ -499,7 +488,7 @@ class Zyklus {
 
   @override
   String toString() {
-    return 'Zyklus: $_name ($_zyklusID)';
+    return 'Zyklus:            $_name ($_zyklusID)';
   }
 }
 
@@ -542,17 +531,18 @@ class Antwort {
 
   @override
   String toString() {
-    return 'Antwort: $_name ($_id)';
+    return 'Antwort:      $_name ($_id)';
   }
 }
 
-class TerminAntwort {
+class AntwortTermin {
 
   // -------------------------------- Variablen -------------------------------
 
   // @formatter:off
   User    _user;
-  Antwort _antwort;
+  Antwort _antwortUser;
+  Antwort _antwortLeiter;
   String  kommentar;
   // @formatter:on
 
@@ -560,10 +550,11 @@ class TerminAntwort {
 
   // @formatter:off
   /// Konstruktor
-  TerminAntwort(User user, Antwort antwort, String kommentar) {
-    this.user      = user;
-    this.antwort   = antwort;
-    this.kommentar = kommentar;
+  AntwortTermin(User user, Antwort antwortUser, Antwort antwortLeiter, String kommentar) {
+    this.user          = user;
+    this.antwortUser   = antwortUser;
+    this.antwortLeiter = antwortLeiter;
+    this.kommentar     = kommentar;
   } // @formatter:on
 
   // --------------------------------- Setter ---------------------------------
@@ -572,22 +563,27 @@ class TerminAntwort {
     _user = user;
   }
 
-  set antwort(Antwort antwort) {
-    _antwort = antwort;
+  set antwortUser(Antwort antwortUser) {
+    _antwortUser = antwortUser;
+  }
+
+  set antwortLeiter(Antwort antwortLeiter) {
+    _antwortLeiter = antwortLeiter;
   }
 
   // --------------------------------- Getter ---------------------------------
 
   // @formatter:off
-  User    get user    => _user;
-  Antwort get antwort => _antwort;
+  User    get user          => _user;
+  Antwort get antwortUser   => _antwortUser;
+  Antwort get antwortLeiter => _antwortLeiter;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
 
   @override
   String toString() {
-    return 'Termin-Antwort: ${_user.vorname} ${_user.nachname} (${_user
-        .userID})\n${_antwort}';
+    return 'Termin-Antwort:    ${_user.vorname} ${_user.nachname} (${_user
+        .userID})\nKommentar:         $kommentar\nUser-${_antwortUser}\nLeit-${_antwortLeiter}';
   }
 }
