@@ -1,8 +1,8 @@
+import 'requests/variables.dart' as variables;
 //import 'package:path_provider/path_provider.dart';
+import 'pruefungen.dart' as pruefungen;
 import 'package:http/http.dart' as http;
 import 'dart:io';
-import 'requests/variables.dart' as variables;
-import 'pruefungen.dart' as pruefungen;
 
 class User {
   // -------------------------------- Variablen -------------------------------
