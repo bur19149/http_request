@@ -1,8 +1,8 @@
 //import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io';
 import 'requests/variables.dart' as variables;
+import 'package:http/http.dart' as http;
 import 'pruefungen.dart' as pruefungen;
+import 'dart:io';
 
 class User {
   // -------------------------------- Variablen -------------------------------
@@ -25,7 +25,8 @@ class User {
 
   // @formatter:off
   /// Konstruktor
-  User(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
+  User(int userID, String vorname, String nachname, String email, String plz, String ort,
+      UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered) {
     this.userID       = userID;
     this.vorname      = vorname;
     this.nachname     = nachname;
@@ -127,7 +128,8 @@ class User {
   @override
   String toString() {
     String str =
-        'Name:         $_vorname $_nachname ($_userID)\nWohnort:      $_ort ($_plz)\nE-Mail:       $_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
+        'Name:         $_vorname $_nachname ($_userID)\nWohnort:      $_ort ($_plz)\nE-Mail:       '
+        '$_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
     if (parent != null) {
       str +=
           'Elternteil:   ${parent.vorname} ${parent.nachname} (${parent.userID})';
@@ -154,9 +156,10 @@ class Admin extends User {
 
   // @formatter:off
   /// Konstruktor
-  Admin(int userID, String vorname, String nachname, String email, String plz, String ort, UserTyp typ, String jugendgruppe,
-      User parent, List<User> children, bool registered, String dsgvo, String portal, String anmeldung)
-      : super(userID, vorname, nachname, email, plz, ort, typ, jugendgruppe, parent, children, registered) {
+  Admin(int userID, String vorname, String nachname, String email, String plz, String ort,
+      UserTyp typ, String jugendgruppe, User parent, List<User> children, bool registered,
+      String dsgvo, String portal, String anmeldung) : super(userID, vorname, nachname, email,
+      plz, ort, typ, jugendgruppe, parent, children, registered) {
     this.dsgvo     = dsgvo;
     this.portal    = portal;
     this.anmeldung = anmeldung;
@@ -300,8 +303,9 @@ class UserTermin {
 
   // @formatter:off
   /// Konstruktor
-  UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name, String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd,
-      DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer) {
+  UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name,
+      String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
+      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer) {
     this.plaetze           = plaetze;
     this.terminID         = terminID;
     this.veranstaltungsID = veranstaltungsID;
@@ -414,8 +418,11 @@ class UserTermin {
 
   @override
   String toString() {
-    String str = 'Termin:            $name ($_terminID)\nAnzahl Plätze:     $_plaetze\nOrt:               $ort\nBeschreibung:      '
-        '$_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart:      $_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           $_timeVon - $_timeBis\n$_zyklus';
+    String str = 'Termin:            $name ($_terminID)\nAnzahl Plätze:     '
+        '$_plaetze\nOrt:               $ort\nBeschreibung:      '
+        '$_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart:      '
+        '$_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           '
+        '$_timeVon - $_timeBis\n$_zyklus';
     if (teilnehmer.isNotEmpty) {
       str += '\nTeilnehmer:\n---------------\n';
       for (AntwortTermin antwortTermin in teilnehmer) {
@@ -436,9 +443,11 @@ class AdminTermin extends UserTermin {
 
   // @formatter:off
   /// Konstruktor
-  AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name, String beschreibung, DateTime anmeldungStart,
-      DateTime anmeldungEnd, DateTime timeVon, DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet)
-      : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart, anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {
+  AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name,
+      String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
+      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet)
+      : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart,
+      anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {
     this.freigeschaltet = freigeschaltet;
   } // @formatter:on
 
