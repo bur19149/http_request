@@ -414,7 +414,8 @@ class UserTermin {
 
   @override
   String toString() {
-    String str = 'Termin:            $name ($_terminID)\nAnzahl Plätze:     $_plaetze\nOrt:               $ort\nBeschreibung:      $_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart:      $_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           $_timeVon - $_timeBis\n$_zyklus';
+    String str = 'Termin:            $name ($_terminID)\nAnzahl Plätze:     $_plaetze\nOrt:               $ort\nBeschreibung:      '
+        '$_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart:      $_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           $_timeVon - $_timeBis\n$_zyklus';
     if (teilnehmer.isNotEmpty) {
       str += '\nTeilnehmer:\n---------------\n';
       for (AntwortTermin antwortTermin in teilnehmer) {
