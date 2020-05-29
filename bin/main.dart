@@ -1,11 +1,14 @@
 import 'package:http_request/http_request.dart' as http_request;
 import 'objects.dart' as objects;
+import 'requests/admin.dart';
 import 'requests/login.dart' as login;
 
 main(List<String> arguments) async {
 
-print('${await login.requestUser()}');
-
+//print('${await login.requestUser()}');
+for(var zyklus in await requestZyklen()){
+  print(zyklus);
+}
 
 
 

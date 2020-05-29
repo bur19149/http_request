@@ -131,8 +131,7 @@ class User {
         'Name:         $_vorname $_nachname ($_userID)\nWohnort:      $_ort ($_plz)\nE-Mail:       '
         '$_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
     if (parent != null) {
-      str +=
-          'Elternteil:   $parent';
+      str += 'Elternteil:   $parent';
     }
     if (_children != null && _children.isNotEmpty) {
       str += '\nKinder:\n---------------\n';
@@ -465,7 +464,7 @@ class Zyklus {
 
   // @formatter:off
   int   _zyklusID;
-  String _name;
+  String name;
   // @formatter:on
 
   // ----------------------------- Konstruktoren ------------------------------
@@ -483,22 +482,15 @@ class Zyklus {
     _zyklusID = pruefungen.prufeID(value);
   }
 
-  set name(String value) {
-    _name = pruefungen.prufeName(pruefungen.stringPrufung(value));
-  }
-
   // --------------------------------- Getter ---------------------------------
 
-  // @formatter:off
-  int    get zyklusID => _zyklusID;
-  String get name     => _name;
-  // @formatter:on
+  int get zyklusID => _zyklusID;
 
   // -------------------------------- toString --------------------------------
 
   @override
   String toString() {
-    return 'Zyklus:            $_name ($_zyklusID)';
+    return 'Zyklus:            $name ($_zyklusID)';
   }
 }
 

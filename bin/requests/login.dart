@@ -76,6 +76,8 @@ void login(String value) async {
   }
 }
 
+/// Liefert den eigenen User zurück.
+/// Kann je nach Usertyp ein User-, oder ein Admin-Objekt zurückliefern.
 Future<objects.User> requestUser() async {
   var _response =
       await http.get('${variables.url}/user?token=${variables.token}');
