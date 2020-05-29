@@ -7,7 +7,7 @@ import 'variables.dart' as variables;
 
 Future<List<objects.Zyklus>> requestZyklen() async {
   var _response =
-      await http.get('${variables.url}/zyklus?token=${variables.token}');
+  await http.get('${variables.url}/zyklus?token=${variables.token}');
   if (_response.statusCode != 200) {
     throw Exception(
         'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
@@ -18,3 +18,34 @@ Future<List<objects.Zyklus>> requestZyklen() async {
   }
   return zyklen;
 }
+
+abstract class User {
+  static Future<objects.User> requestUser(int userID) async {
+    var _response =
+    await http.get('${variables.url}/admin/user?token=${variables
+        .token}&userid=${userID}');
+    if (_response.statusCode != 200) {
+      throw Exception(
+          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+    }
+    return converter
+        .jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
+  }
+
+  static Future<List<objects.User>> requestUserListe() async {
+    var _response =
+    await http.get('${variables.url}/admin/user?token=${variables.token}');
+    if (_response.statusCode != 200) {
+      throw Exception(
+          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+    }
+    var userliste = <objects.User>[];
+    for (var user in convert.jsonDecode(_response.body)['data']['users']) {
+      userliste.add(converter.jsonToUser(user));
+    }
+    return userliste;
+  }
+}
+
+
+abstract class Termin {}

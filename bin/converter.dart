@@ -4,14 +4,14 @@ import 'objects.dart' as objects;
 /// Konvertiert ein, mittels jsonDecode aus der dart:convert Library in eine LinkedHashMap konvertiertes, json-File
 /// in ein User-, oder Admin-Objekt.
 objects.User jsonToUser(LinkedHashMap jsonAsList) {
-  var _children = [];
+  var _children = <int>[];
   if (jsonAsList['children'] != null && jsonAsList['children'].isNotEmpty) {
     for (var id in jsonAsList['children']) {
-      _children.add(id);
+      _children.add(id is int ? id : jsonToUser(id).userID);
     }
   }
-  if (jsonAsList['dsgvo'] != null ||
-      jsonAsList['anmeldung'] != null ||
+  if (jsonAsList['dsgvo'] != null &&
+      jsonAsList['anmeldung'] != null &&
       jsonAsList['portal'] != null) {
     return objects.Admin(
         jsonAsList['userid'],
@@ -22,7 +22,9 @@ objects.User jsonToUser(LinkedHashMap jsonAsList) {
         jsonAsList['ort'],
         jsonToUserTyp(jsonAsList['typ']),
         jsonAsList['jugendgruppe'],
-        jsonAsList['parent'],
+        jsonAsList['parent'] is int || jsonAsList['parent'] == null
+            ? jsonAsList['parent']
+            : jsonToUser(jsonAsList['parent']).userID,
         _children.isNotEmpty ? _children : null,
         jsonAsList['registered'],
         jsonAsList['dsgvo'],
@@ -38,7 +40,9 @@ objects.User jsonToUser(LinkedHashMap jsonAsList) {
       jsonAsList['ort'],
       jsonToUserTyp(jsonAsList['typ']),
       jsonAsList['jugendgruppe'],
-      jsonAsList['parent'],
+      jsonAsList['parent'] is int || jsonAsList['parent'] == null
+          ? jsonAsList['parent']
+          : jsonToUser(jsonAsList['parent']).userID,
       _children.isNotEmpty ? _children : null,
       jsonAsList['registered']);
 }
@@ -46,8 +50,12 @@ objects.User jsonToUser(LinkedHashMap jsonAsList) {
 /// Konvertiert ein, mittels jsonDecode aus der dart:convert Library in eine LinkedHashMap konvertiertes, json-File
 /// in ein UserTyp-Objekt.
 objects.UserTyp jsonToUserTyp(LinkedHashMap jsonAsList) {
-  return objects.UserTyp(jsonAsList['typid'], jsonAsList['name'],
-      jsonToPermission(jsonAsList['permissions']));
+  return objects.UserTyp(
+      jsonAsList['typid'],
+      jsonAsList['name'],
+      jsonAsList['permissions'] != null
+          ? jsonToPermission(jsonAsList['permissions'])
+          : null);
 }
 
 /// Konvertiert ein, mittels jsonDecode aus der dart:convert Library in eine LinkedHashMap konvertiertes, json-File

@@ -9,7 +9,7 @@ class User {
 
   // @formatter:off
   int        _userID;       // einzigartige ID
-  String     _jugendgruppe;
+  String     jugendgruppe;
   String     _nachname;
   String     _vorname;
   String     _email;
@@ -54,14 +54,10 @@ class User {
     _nachname = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
-  set jugendgruppe(String value) {
-    _jugendgruppe = pruefungen.stringPrufung(value);
-  }
-
   set plz(String value) {
     //wann man "value" auf int setzt schreit der DUMME kompiler.
     var megaGay = int.parse(pruefungen.stringPrufung(value)); //workaround
-    if (megaGay < 1010 || megaGay > 9992) {
+    if (megaGay < 1000 || megaGay > 9992) {
       throw ('Die Postleitzahl ist ungültig.');
     } else {
       _plz = megaGay.toString();
@@ -115,7 +111,6 @@ class User {
   int        get userID       => _userID;
   String     get vorname      => _vorname;
   String     get nachname     => _nachname;
-  String     get jugendgruppe => _jugendgruppe;
   String     get plz          => _plz;
   String     get ort          => _ort;
   String     get email        => _email;
@@ -129,7 +124,7 @@ class User {
   String toString() {
     String str =
         'Name:         $_vorname $_nachname ($_userID)\nWohnort:      $_ort ($_plz)\nE-Mail:       '
-        '$_email\nJugendgruppe: $_jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
+        '$_email\nJugendgruppe: $jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
     if (parent != null) {
       str += 'Elternteil:   $parent';
     }
@@ -180,9 +175,9 @@ class UserTyp {
   // -------------------------------- Variablen -------------------------------
 
   // @formatter:off
-  int              _typID;       // ID des Typs
-  String           _name;        // Bezeichnung des Usertyps z. B. Admin
-  List<Permission> _permissions; // Liste der Berechtigungen
+  int              _typID;      // ID des Typs
+  String           _name;       // Bezeichnung des Usertyps z. B. Admin
+  List<Permission> permissions; // Liste der Berechtigungen
   // @formatter:on
 
   // ----------------------------- Konstruktoren ------------------------------
@@ -205,20 +200,11 @@ class UserTyp {
     _name = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
-  set permissions(List<Permission> value) {
-    if (value == null || value.isEmpty) {
-      throw Exception('Die Permissions Liste ist null.');
-    } else {
-      _permissions = value;
-    }
-  }
-
   // --------------------------------- Getter ---------------------------------
 
   // @formatter:off
   int              get typID       => _typID;
   String           get name        => _name;
-  List<Permission> get permissions => _permissions;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
@@ -226,8 +212,10 @@ class UserTyp {
   @override
   String toString() {
     String str = 'User-Typ:     $_name ($_typID)\nBerechtigungen:\n---------------\n';
-    for (Permission p in _permissions) {
-      str += p.toString() + '\n---------------\n';
+    if (permissions != null) {
+      for (Permission p in permissions) {
+        str += p.toString() + '\n---------------\n';
+      }
     }
     return str;
   }
