@@ -277,7 +277,7 @@ class UserTermin {
   int                 _plaetze;
   int                 _terminID;
   int                 _veranstaltungsID;
-  String              _ort;
+  String              ort;
   String              name;
   String              _beschreibung;
   DateTime            _anmeldungStart;
@@ -336,8 +336,6 @@ class UserTermin {
       throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isAfter(_timeBis)) {
       throw ('Error:Das Datum ist nach dem Ende.');
-    } else if (value.isBefore(DateTime.now())) {
-      throw ('Der Termin darf nicht in der Verganganheit stattfinden');
     } else {
       _timeVon = value;
     }
@@ -370,10 +368,6 @@ class UserTermin {
     _veranstaltungsID = pruefungen.prufeID(value);
   }
 
-  set ort(String value) {
-    _ort = pruefungen.prufeOrt(pruefungen.stringPrufung(value));
-  }
-
   set beschreibung(String value) {
     _beschreibung = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
@@ -392,7 +386,6 @@ class UserTermin {
   int      get plaetze          => _plaetze;
   int      get terminID         => _terminID;
   int      get veranstaltungsID => _veranstaltungsID;
-  String   get ort              => _ort;
   String   get beschreibung     => _beschreibung;
   DateTime get anmeldungStart   => _anmeldungStart;
   DateTime get anmeldungEnde    => _anmeldungEnde;
@@ -411,9 +404,9 @@ class UserTermin {
         '$_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           '
         '$_timeVon - $_timeBis\n$_zyklus';
     if (teilnehmer.isNotEmpty) {
-      str += '\nTeilnehmer:\n---------------\n';
+      str += '\nTeilnehmer:\n---------------';
       for (AntwortTermin antwortTermin in teilnehmer) {
-        str += '$antwortTermin\n---------------\n';
+        str += '\n$antwortTermin\n---------------';
       }
     }
     return str;
@@ -442,7 +435,7 @@ class AdminTermin extends UserTermin {
 
   @override
   String toString() {
-    return super.toString() + 'freigeschaltet:    $freigeschaltet';
+    return super.toString() + '\nfreigeschaltet:    $freigeschaltet';
   }
 }
 

@@ -6,8 +6,11 @@ import 'requests/login.dart' as login;
 import 'requests/user.dart' as user;
 
 main(List<String> arguments) async {
-
-  //  debug.printUserliste(await admin.User.requestUserListe());
-  //  admin.User.erstelleUser('John', 'Doe', 1, '1010', 'Wien');
-  print(await admin.Termin.requestTermin(31));
+//  debug.printListe(await admin.User.requestUserListe());
+//  admin.User.erstelleUser('John', 'Doe', 1, '1010', 'Wien');
+//  print(await admin.Termin.requestTermin(31));
+//  debug.printListe(await admin.Termin.requestTerminListe(true));
+//debug.printListe(await user.requestAlleTermine());
+debug.printListe(await user.requestMeineTermine());
+//  print(await user.requestTermin(31));
 }

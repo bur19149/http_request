@@ -10,8 +10,8 @@ void output(http.Response response) {
 
 /// Nur zu Debuggingzwecken
 /// Wird verwendet um Userlisten in der Konsole auszugeben.
-void printUserliste(List<objects.User> userliste) {
-  for(var user in userliste){
-  print('$user\n\n###########################################################################\n\n');
+void printListe(var liste) {
+  for(var item in liste){
+  print('$item\n\n###########################################################################\n\n');
   }
 }

@@ -78,8 +78,19 @@ abstract class Termin {
       throw Exception(
           'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
     }
-//    print(convert.jsonDecode(_response.body)['termin']);
-//    return null;
     return converter.jsonToTermin(convert.jsonDecode(_response.body)['termin']);
+  }
+
+  static Future<List<objects.UserTermin>> requestTerminListe(bool archive) async {
+    var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&archive=$archive');
+    if (_response.statusCode != 200) {
+      throw Exception(
+          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+    }
+    var terminliste = <objects.UserTermin>[];
+    for (var termin in convert.jsonDecode(_response.body)['termine']) {
+      terminliste.add(converter.jsonToTermin(termin));
+    }
+    return terminliste;
   }
 }
