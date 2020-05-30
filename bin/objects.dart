@@ -108,14 +108,14 @@ class User {
   // --------------------------------- Getter ---------------------------------
 
   // @formatter:off
-  int        get userID       => _userID;
-  String     get vorname      => _vorname;
-  String     get nachname     => _nachname;
-  String     get plz          => _plz;
-  String     get ort          => _ort;
-  String     get email        => _email;
-  UserTyp    get typ          => _typ;
-  List<int>  get children     => _children;
+  int        get userID   => _userID;
+  String     get vorname  => _vorname;
+  String     get nachname => _nachname;
+  String     get plz      => _plz;
+  String     get ort      => _ort;
+  String     get email    => _email;
+  UserTyp    get typ      => _typ;
+  List<int>  get children => _children;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
@@ -124,7 +124,9 @@ class User {
   String toString() {
     String str =
         'Name:         $_vorname $_nachname ($_userID)\nWohnort:      $_ort ($_plz)\nE-Mail:       '
-        '$_email\nJugendgruppe: $jugendgruppe\nRegistriert:  $registered\n${_typ.toString()}';
+                '$_email\n' +
+            (jugendgruppe != null ? 'Jugendgruppe: $jugendgruppe\n' : '') +
+            'Registriert:  $registered\n${_typ.toString()}';
     if (parent != null) {
       str += 'Elternteil:   $parent';
     }
@@ -272,17 +274,17 @@ class UserTermin {
   // -------------------------------- Variablen -------------------------------
 
   // @formatter:off
-  int        _plaetze;
-  int        _terminID;
-  int        _veranstaltungsID;
-  String     _ort;
-  String     name;
-  String     _beschreibung;
-  DateTime   _anmeldungStart;
-  DateTime   _anmeldungEnde;
-  DateTime   _timeVon;
-  DateTime   _timeBis;
-  Zyklus     _zyklus;
+  int                 _plaetze;
+  int                 _terminID;
+  int                 _veranstaltungsID;
+  String              _ort;
+  String              name;
+  String              _beschreibung;
+  DateTime            _anmeldungStart;
+  DateTime            _anmeldungEnde;
+  DateTime            _timeVon;
+  DateTime            _timeBis;
+  Zyklus              _zyklus;
   List<AntwortTermin> teilnehmer;
   // @formatter:on
 
@@ -314,8 +316,6 @@ class UserTermin {
       throw ('Error:Das Datum ist Null.');
     } else if (_timeVon != null && value.isAfter(_timeBis)) {
       throw ('Error:Das Datum ist nach dem Ende.');
-    } else if (value.isBefore(DateTime.now())) {
-      throw ('Der Termin darf nicht in der Verganganheit stattfinden');
     } else {
       _anmeldungStart = value;
     }
@@ -573,7 +573,9 @@ class AntwortTermin {
 
   @override
   String toString() {
-    return 'Termin-Antwort:    ${_user.vorname} ${_user.nachname} (${_user
-        .userID})\nKommentar:         $kommentar\nUser-${_antwortUser}\nLeit-${_antwortLeiter}';
+    return 'Antwort-Termin:    ${_user.vorname} ${_user.nachname} (${_user
+        .userID})\n' +
+        (kommentar != null ? 'Kommentar:         $kommentar\n' : '') +
+        'User-${_antwortUser}\nLeit-${_antwortLeiter}';
   }
 }

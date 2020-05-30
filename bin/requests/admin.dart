@@ -4,10 +4,12 @@ import 'package:http/http.dart' as http;
 import '../converter.dart' as converter;
 import '../objects.dart' as objects;
 import 'variables.dart' as variables;
+import 'debug.dart' as debug;
+
 
 Future<List<objects.Zyklus>> requestZyklen() async {
   var _response =
-  await http.get('${variables.url}/zyklus?token=${variables.token}');
+      await http.get('${variables.url}/zyklus?token=${variables.token}');
   if (_response.statusCode != 200) {
     throw Exception(
         'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
@@ -20,10 +22,32 @@ Future<List<objects.Zyklus>> requestZyklen() async {
 }
 
 abstract class User {
+  static void erstelleUser(
+      String vorname, String nachname, int berechtigung, String plz, String ort,
+      [String jugendgruppe, int elternid, String elternemail, String email]) async {
+    var _response = await http.post(
+        '${variables.url}/admin/user?token=${variables.token}&vorname=$vorname&nachname=$nachname&berechtigung=$berechtigung&plz=$plz&ort=$ort' +
+            (jugendgruppe != null ? '&jugendgruppe=$jugendgruppe' : '') +
+            (elternid != null ? '&elternid=$elternid' : '') +
+            (elternemail != null ? '&elternemail=$elternemail' : '') +
+            (email != null ? '&email=$email' : ''));
+//  var body = {};
+//  body.
+//    var _response = await http.post(
+//        '${variables.url}/admin/user', body: {'token': variables.token, 'vorname': vorname, 'nachname': nachname, 'berechtigung': '$berechtigung', 'plz': plz, 'ort': ort/*,
+//            jugendgruppe != null ? 'jugendgruppe': jugendgruppe' : null,
+//            (elternid != null ? '&elternid=$elternid' : ''),
+//            (elternemail != null ? '&elternemail=$elternemail' : ''),
+//            (email != null ? '&email=$email' : '')*/});
+    if(_response.statusCode != 200) {
+      throw Exception(
+          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+    }
+  }
+
   static Future<objects.User> requestUser(int userID) async {
-    var _response =
-    await http.get('${variables.url}/admin/user?token=${variables
-        .token}&userid=${userID}');
+    var _response = await http.get(
+        '${variables.url}/admin/user?token=${variables.token}&userid=${userID}');
     if (_response.statusCode != 200) {
       throw Exception(
           'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
@@ -34,7 +58,7 @@ abstract class User {
 
   static Future<List<objects.User>> requestUserListe() async {
     var _response =
-    await http.get('${variables.url}/admin/user?token=${variables.token}');
+        await http.get('${variables.url}/admin/user?token=${variables.token}');
     if (_response.statusCode != 200) {
       throw Exception(
           'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
@@ -47,5 +71,15 @@ abstract class User {
   }
 }
 
-
-abstract class Termin {}
+abstract class Termin {
+  static Future<objects.AdminTermin> requestTermin(int eventID) async {
+    var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&eventid=$eventID');
+    if (_response.statusCode != 200) {
+      throw Exception(
+          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+    }
+//    print(convert.jsonDecode(_response.body)['termin']);
+//    return null;
+    return converter.jsonToTermin(convert.jsonDecode(_response.body)['termin']);
+  }
+}
