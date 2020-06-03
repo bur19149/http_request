@@ -25,6 +25,7 @@ import 'dart:convert' as convert;
     }
   }
 
+  //TODO in der Dolu sind die ERROR Codes nicht Dokumentiert [-> Unfinished]
   abmeldungTermin(String token, eventID, [int userID]) async{
     var parameters = <String, dynamic>{};
                      parameters['token']   = token;
