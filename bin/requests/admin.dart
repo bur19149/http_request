@@ -142,4 +142,8 @@ abstract class Termin {
     }
   }
   // @formatter:on
+
+  addUserZuTermin(){
+
+  }
 }
