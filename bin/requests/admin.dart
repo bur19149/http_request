@@ -1,5 +1,4 @@
 import 'dart:convert' as convert;
-
 import 'package:http/http.dart' as http;
 import '../converter.dart' as converter;
 import '../objects.dart' as objects;
@@ -88,7 +87,7 @@ abstract class Termin {
     var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&archive=$archive');
     if (_response.statusCode != 200) {
       throw Exception(
-          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
     var terminliste = <objects.UserTermin>[];
     for (var termin in convert.jsonDecode(_response.body)['termine']) {
@@ -100,7 +99,7 @@ abstract class Termin {
   static void terminLoeschen(int id) async {
     var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
     if (_response.statusCode != 204) {
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
   }
 
@@ -112,6 +111,36 @@ abstract class Termin {
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
   }
+
+  // @formatter:off
+  static bearbeiteUser(String token, int userID,
+      [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
+       int berechtigung, int elternID, String elternmail]) async{
+
+    var parameterListe = <String, dynamic>{};
+                            parameterListe['token']        = token;
+                            parameterListe['userid']       = userID;
+    if(vorname!=null)       parameterListe['vorname']      = vorname;
+    if(nachname!=null)      parameterListe['nachname']     = nachname;
+    if(email!=null)         parameterListe['email']        = email;
+    if(plz!=null)           parameterListe['plz']          = plz;
+    if(ort!=null)           parameterListe['ort']          = ort;
+    if(jugendgruppe!=null)  parameterListe['jugendgruppe'] = jugendgruppe;
+    if(berechtigung!= null) parameterListe['berechtigung'] = berechtigung;
+    if(elternID!=null)      parameterListe['elternID']     = elternID;
+    if(elternmail!=null)    parameterListe['elternmail']   = elternmail;
+
+    var _response = await http.patch(variables.url, body: parameterListe);
+    if(_response.statusCode!=204){
+      if(_response.statusCode==404){
+        throw Exception('Der User Existiert nicht.');
+      }else{
+        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+      }
+    }// @formatter:on
+  }
+
+
 
 
 }
