@@ -21,6 +21,18 @@ Future<List<objects.Zyklus>> requestZyklen() async {
 }
 
 abstract class User {
+
+  static loescheUser(int id) async{
+    var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
+    if(_response.statusCode!=204){
+      if(_response.statusCode==404){
+        throw Exception('Der User Existiert nicht.');
+      }else{
+        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+      }
+    }
+  }
+
 //TODO funktioniert nicht
 //  static void erstelleUser(
 //      String vorname, String nachname, int berechtigung, String plz, String ort,
@@ -98,17 +110,6 @@ abstract class Termin {
     var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
     if (_response.statusCode != 204) {
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-    }
-  }
-
-  static loescheUser(int id) async{
-    var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
-    if(_response.statusCode!=204){
-      if(_response.statusCode==404){
-        throw Exception('Der User Existiert nicht.');
-      }else{
-        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-      }
     }
   }
 
