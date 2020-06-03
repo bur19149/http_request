@@ -22,6 +22,36 @@ Future<List<objects.Zyklus>> requestZyklen() async {
 
 abstract class User {
 
+  //TODO for GUI PGM'er pfuefung ob mindestens ein optionaler Parameter dabei sind
+  // @formatter:off
+  static bearbeiteUser(String token, int userID,
+      [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
+        int berechtigung, int elternID, String elternmail]) async{
+
+    var parameter = <String, dynamic>{};
+    parameter['token']        = token;
+    parameter['userid']       = userID;
+    if(vorname!=null)       parameter['vorname']      = vorname;
+    if(nachname!=null)      parameter['nachname']     = nachname;
+    if(email!=null)         parameter['email']        = email;
+    if(plz!=null)           parameter['plz']          = plz;
+    if(ort!=null)           parameter['ort']          = ort;
+    if(jugendgruppe!=null)  parameter['jugendgruppe'] = jugendgruppe;
+    if(berechtigung!= null) parameter['berechtigung'] = berechtigung;
+    if(elternID!=null)      parameter['elternID']     = elternID;
+    if(elternmail!=null)    parameter['elternmail']   = elternmail;
+
+    var _response = await http.patch(variables.url, body: parameter);
+    if(_response.statusCode!=204){
+      if(_response.statusCode==404){
+        throw Exception('Der User Existiert nicht.');
+      }else{
+        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+      }
+    }
+  }
+  // @formatter:on
+
   static loescheUser(int id) async{
     var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
     if(_response.statusCode!=204){
@@ -112,36 +142,6 @@ abstract class Termin {
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
   }
-
-  //TODO for GUI PGM'er pfuefung ob mindestens ein optionaler Parameter dabei sind
-  // @formatter:off
-  static bearbeiteUser(String token, int userID,
-      [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
-       int berechtigung, int elternID, String elternmail]) async{
-
-    var parameter = <String, dynamic>{};
-                            parameter['token']        = token;
-                            parameter['userid']       = userID;
-    if(vorname!=null)       parameter['vorname']      = vorname;
-    if(nachname!=null)      parameter['nachname']     = nachname;
-    if(email!=null)         parameter['email']        = email;
-    if(plz!=null)           parameter['plz']          = plz;
-    if(ort!=null)           parameter['ort']          = ort;
-    if(jugendgruppe!=null)  parameter['jugendgruppe'] = jugendgruppe;
-    if(berechtigung!= null) parameter['berechtigung'] = berechtigung;
-    if(elternID!=null)      parameter['elternID']     = elternID;
-    if(elternmail!=null)    parameter['elternmail']   = elternmail;
-
-    var _response = await http.patch(variables.url, body: parameter);
-    if(_response.statusCode!=204){
-      if(_response.statusCode==404){
-        throw Exception('Der User Existiert nicht.');
-      }else{
-        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-      }
-    }
-  }
-  // @formatter:on
 
   addUserZuTermin(){
 
