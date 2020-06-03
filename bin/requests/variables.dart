@@ -35,11 +35,9 @@ abstract class FileHandler {
   static void readFile() async {
     try {
       final file = await _localFile;
-      // Reads the file.
       token = await file.readAsString();
     } catch (e) {
-      throw Exception(
-          'Zugriff verweigert, oder Datei $_localFile konnte nicht gefunden werden.');
+      throw Exception('Zugriff verweigert, oder Datei $_localFile konnte nicht gefunden werden.');
     }
   }
 }

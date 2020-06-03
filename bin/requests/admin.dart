@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../converter.dart' as converter;
 import '../objects.dart' as objects;
 import 'variables.dart' as variables;
-import 'debug.dart' as debug;
+//import 'debug.dart' as debug;
 
 
 Future<List<objects.Zyklus>> requestZyklen() async {
@@ -100,8 +100,18 @@ abstract class Termin {
   static void terminLoeschen(int id) async {
     var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
     if (_response.statusCode != 204) {
-      throw Exception(
-          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
     }
   }
+
+  static loescheUser(int id) async{
+    var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
+    if(_response.statusCode==404){
+      throw Exception('Der User Existiert nicht.');
+    }else if(_response.statusCode!=204){
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+    }
+  }
+
+
 }
