@@ -29,8 +29,8 @@ abstract class User {
         int berechtigung, int elternID, String elternmail]) async{
 
     var parameter = <String, dynamic>{};
-    parameter['token']        = token;
-    parameter['userid']       = userID;
+                            parameter['token']        = token;
+                            parameter['userid']       = userID;
     if(vorname!=null)       parameter['vorname']      = vorname;
     if(nachname!=null)      parameter['nachname']     = nachname;
     if(email!=null)         parameter['email']        = email;
@@ -41,7 +41,7 @@ abstract class User {
     if(elternID!=null)      parameter['elternID']     = elternID;
     if(elternmail!=null)    parameter['elternmail']   = elternmail;
 
-    var _response = await http.patch(variables.url, body: parameter);
+    var _response = await http.patch('${variables.url}/admin/user/', body: parameter);
     if(_response.statusCode!=204){
       if(_response.statusCode==404){
         throw Exception('Der User Existiert nicht.');
@@ -143,7 +143,28 @@ abstract class Termin {
     }
   }
 
-  addUserZuTermin(){
+  //@formatter:off
+  addUserZuTermin(String token, int eventID, [String kommentar, bool bestaetigt]) async{
+    var parameters = <String, dynamic>{};
+                           parameters['token']      = token;
+                           parameters['eventid']    = eventID;
+    if(kommentar  != null) parameters['kommentar']  = kommentar;
+    if(bestaetigt != null) parameters['bestaetigt'] = bestaetigt;
 
+    var _response = await http.post('${variables.url}/admin/user}', body:parameters);
+    if(_response.statusCode!=201){
+      if(_response.statusCode==404){
+        throw Exception('User oder Event ist unbekannt.');
+      }else if(_response.statusCode==400){
+        throw Exception('Der User ist schon im Termin eingetragen.');
+      }else{
+        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+      }
+    }
+  }
+  //@formatter:on
+
+  absageUserTermin(){
+    //TODO ABRAGE SCHREIBEN
   }
 }

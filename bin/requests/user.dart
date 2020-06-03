@@ -11,7 +11,7 @@ import 'dart:convert' as convert;
                      parameters['eventid'] = eventID;
     if(userID!=null) parameters['userid']  = userID;
 
-    var _response = await http.patch(variables.url, body: parameters);
+    var _response = await http.patch('${variables.url}/termin/anmelden/', body: parameters);
     if(_response.statusCode!=201||_response.statusCode!=204){
       if(_response.statusCode==404){
         throw Exception('Termin oder UserID existiert nicht.');
@@ -32,7 +32,7 @@ import 'dart:convert' as convert;
                      parameters['eventid'] = eventID;
     if(userID!=null) parameters['userid']  = userID;
 
-    var _response = await http.post(variables.url, body: parameters);
+    var _response = await http.post('${variables.url}/termin/abmelden/', body: parameters);
     if(_response.statusCode!=204){
       throw Exception('Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
     }
