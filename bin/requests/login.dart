@@ -7,6 +7,7 @@ import 'dart:convert' as convert;
 import 'debug.dart' as debug;
 
 //formatter:off
+//TODO parameter name und model implemetieren
 /// Wird zum Einloggen verwendet
 /// value ist der Key der auf der Website generiert werden kann
 void link(String value) async {
@@ -42,8 +43,7 @@ void link(String value) async {
 //  }
 /// Lässt den Server den beim Einloggen generierten Token validieren
 Future<bool> validate() async {
-  debug.output(
-      await http.get('${variables.url}/validate?token=${variables.token}'));
+  debug.output(await http.get('${variables.url}/validate?token=${variables.token}'));
   //TODO
   return null;
 }
