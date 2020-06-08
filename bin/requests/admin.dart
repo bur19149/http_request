@@ -1,9 +1,8 @@
-import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 import '../converter.dart' as converter;
-import '../objects.dart' as objects;
 import 'variables.dart' as variables;
-//import 'debug.dart' as debug;
+import '../objects.dart' as objects;
+import 'dart:convert' as convert;
 
 
 Future<List<objects.Zyklus>> requestZyklen() async {
@@ -124,10 +123,9 @@ abstract class Termin {
   }
 
   static Future<List<objects.UserTermin>> requestTerminListe(bool archive) async {
-    var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&archive=$archive');
+    var _response=await http.get('${variables.url}/admin/termin?token=${variables.token}&archive=$archive');
     if (_response.statusCode != 200) {
-      throw Exception(
-          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
     var terminliste = <objects.UserTermin>[];
     for (var termin in convert.jsonDecode(_response.body)['termine']) {
@@ -162,9 +160,61 @@ abstract class Termin {
       }
     }
   }
-  //@formatter:on
 
-  absageUserTermin(){
-    //TODO ABRAGE SCHREIBEN
+  //TODO API Dokumentation ist noch nicht fertig.
+  absageUserTermin(String token, int eventID, [int userID]) async{
+    var parameters = <String, dynamic>{};
+                       parameters['token']   = token;
+                       parameters['eventid'] = eventID;
+    if(userID != null) parameters['userid']  = userID;
+
+    var _response = await http.patch('${variables.url}/termin/abmelden', body: parameters);
+    if(_response.statusCode!=204){
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+    }
   }
+
+  zusageUsertermin(String token, int eventID,[int userID]) async{
+    var parameters = <String, dynamic>{};
+                       parameters['token']   = token;
+                       parameters['eventid'] = eventID;
+    if(userID != null) parameters['userid']  = userID;
+
+    var _response = await http.patch('${variables.url}/termin/anmelden', body: parameters);
+    if(_response.statusCode!=201||_response.statusCode!=204){
+      if(_response.statusCode==404){
+        throw Exception('UserID oder Termin ist unbekannt.');
+      }else if(_response.statusCode==423){
+        throw Exception('Der Termin ist noch nicht für User sichtbar.');
+      }else if(_response.statusCode==410){
+        throw Exception('Die Anmeldung ist geschlossen.');
+      }else{
+        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+      }
+    }
+  }
+
+  //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
+  bearbeiteTermin(String token, int eventID,
+      [String name, String beschreibung, String ort, DateTime startDatum, DateTime endDatum,
+        int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async{
+    var parameters = <String, dynamic>{};
+                             parameters['token']        = token;
+                             parameters['eventid']      = eventID;
+    if(name         != null) parameters['name']         = name;
+    if(beschreibung != null) parameters['beschreibung'] = beschreibung;
+    if(ort          != null) parameters['ort']          = ort;
+    if(startDatum   != null) parameters['startdatum']   = startDatum;
+    if(endDatum     != null) parameters['enddatum']     = endDatum;
+    if(plaetze      != null) parameters['plaetze']      = plaetze;
+    if(oeffentlich  != null) parameters['oeffentlich']  = oeffentlich;
+    if(sichtbarAb   != null) parameters['sichtbarab']   = sichtbarAb;
+    if(anmeldungBis != null) parameters['anmeldungbis'] = anmeldungBis;
+
+    var _response = await http.patch('${variables.url}/admin/termin', body: parameters);
+    if(_response.statusCode!=204){
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+    }
+  }
+  //@formatter:on
 }
