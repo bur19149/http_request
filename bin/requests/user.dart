@@ -7,11 +7,11 @@ import '../converter.dart' as converter;
 import 'dart:convert' as convert;
 
 //@formatter:off
-  anmeldungTermin(String token, int eventID, [int userID]) async{
-    var parameters = <String, dynamic>{};
-                       parameters['token']   = token;
-                       parameters['eventid'] = eventID;
-    if(userID != null) parameters['userid']  = userID;
+  anmeldungTermin(int eventID, [int userID]) async{
+    var parameters = <String, String>{};
+                       parameters['token']   = '${variables.token}';
+                       parameters['eventid'] = '$eventID';
+    if(userID != null) parameters['userid']  = '$userID';
 
     var _response = await http.patch('${variables.url}/termin/anmelden/', body: parameters);
     if(_response.statusCode!=201||_response.statusCode!=204){
@@ -29,7 +29,7 @@ import 'dart:convert' as convert;
 
 //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
   void abmeldungTermin(int eventID, [int userID]) async{ // @formatter:off
-  var parameters = <String, dynamic>{};
+  var parameters = <String, String>{};
   parameters['token']   = variables.token;
   parameters['eventid'] = '$eventID';
   if(userID != null) parameters['userid']  = '$userID';

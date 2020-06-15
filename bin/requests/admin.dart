@@ -23,22 +23,22 @@ Future<List<objects.Zyklus>> requestZyklen() async { // @formatter:off
 abstract class User {
   //TODO for GUI PGM'er pfuefung ob mindestens ein optionaler Parameter dabei sind
   // @formatter:off
-  static void bearbeiteUser(String token, int userID,
+  static void bearbeiteUser(int userID,
       [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
         int berechtigung, int elternID, String elternmail]) async{
 
-    var parameter = <String, dynamic>{};
-                             parameter['token']        = token;
-                             parameter['userid']       = userID;
-    if(vorname      != null) parameter['vorname']      = vorname;
-    if(nachname     != null) parameter['nachname']     = nachname;
-    if(email        != null) parameter['email']        = email;
-    if(plz          != null) parameter['plz']          = plz;
-    if(ort          != null) parameter['ort']          = ort;
-    if(jugendgruppe != null) parameter['jugendgruppe'] = jugendgruppe;
-    if(berechtigung != null) parameter['berechtigung'] = berechtigung;
-    if(elternID     != null) parameter['elternID']     = elternID;
-    if(elternmail   != null) parameter['elternmail']   = elternmail;
+    var parameter = <String, String>{};
+                             parameter['token']        = '${variables.token}';
+                             parameter['userid']       = '$userID';
+    if(vorname      != null) parameter['vorname']      = '$vorname';
+    if(nachname     != null) parameter['nachname']     = '$nachname';
+    if(email        != null) parameter['email']        = '$email';
+    if(plz          != null) parameter['plz']          = '$plz';
+    if(ort          != null) parameter['ort']          = '$ort';
+    if(jugendgruppe != null) parameter['jugendgruppe'] = '$jugendgruppe';
+    if(berechtigung != null) parameter['berechtigung'] = '$berechtigung';
+    if(elternID     != null) parameter['elternID']     = '$elternID';
+    if(elternmail   != null) parameter['elternmail']   = '$elternmail';
 
     var _response = await http.patch('${variables.url}/admin/user/', body: parameter);
     if(_response.statusCode!=204){
@@ -118,19 +118,19 @@ abstract class User {
 abstract class Termin {
 
   static void erstelleTermin(objects.AdminTermin termin) async { // @formatter:off
-    var _parameters = <String, dynamic>{};
+    var _parameters = <String, String>{};
                                       _parameters['token']        = variables.token;
                                       _parameters['name']         = termin.name;
                                       _parameters['beschreibung'] = termin.beschreibung;
                                       _parameters['ort']          = termin.ort;
-                                      _parameters['start_datum']  = termin.timeVon;
-                                      _parameters['end_datum']    = termin.timeBis;
-                                      _parameters['zyklusid']     = termin.zyklus.zyklusID;
-//                                    _parameters['zyklus_ende']  = termin.zyklus. TODO
-                                      _parameters['plaetze']      = termin.plaetze;
-    if(termin.freigeschaltet != null) _parameters['oeffentlich']  = termin.freigeschaltet;
-    if(termin.anmeldungStart != null) _parameters['sichtbar_ab']  = termin.anmeldungStart;
-    if(termin.anmeldungEnde  != null) _parameters['sichtbar_bis'] = termin.anmeldungEnde;
+                                      _parameters['start_datum']  = '${termin.timeVon}';
+                                      _parameters['end_datum']    = '${termin.timeBis}';
+                                      _parameters['zyklusid']     = '${termin.zyklus.zyklusID}';
+//                                    _parameters['zyklus_ende']  = '${termin.zyklus. }'; TODO
+                                      _parameters['plaetze']      = '${termin.plaetze}';
+    if(termin.freigeschaltet != null) _parameters['oeffentlich']  = '${termin.freigeschaltet}';
+    if(termin.anmeldungStart != null) _parameters['sichtbar_ab']  = '${termin.anmeldungStart}';
+    if(termin.anmeldungEnde  != null) _parameters['sichtbar_bis'] = '${termin.anmeldungEnde}';
 
     var _response = await http.post('${variables.url}/admin/termin', body: _parameters);
     if (_response.statusCode != 201) {
@@ -188,12 +188,12 @@ abstract class Termin {
   } // @formatter:on
 
   //@formatter:off
-  static void addUserZuTermin(String token, int eventID, [String kommentar, bool bestaetigt]) async{
-    var parameters = <String, dynamic>{};
-                           parameters['token']      = token;
-                           parameters['eventid']    = eventID;
-    if(kommentar  != null) parameters['kommentar']  = kommentar;
-    if(bestaetigt != null) parameters['bestaetigt'] = bestaetigt;
+  static void addUserZuTermin(int eventID, [String kommentar, bool bestaetigt]) async{
+    var parameters = <String, String>{};
+                           parameters['token']      = '${variables.token}';
+                           parameters['eventid']    = '$eventID';
+    if(kommentar  != null) parameters['kommentar']  = '$kommentar';
+    if(bestaetigt != null) parameters['bestaetigt'] = '$bestaetigt';
 
     var _response = await http.post('${variables.url}/admin/user}', body:parameters);
     if(_response.statusCode!=201){
@@ -209,7 +209,7 @@ abstract class Termin {
 
   //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
   static void absageUserTermin(int eventID, int userID, [String kommentar]) async{ // @formatter:off
-    var parameters = <String, dynamic>{};
+    var parameters = <String, String>{};
                           parameters['token']     = '${variables.token}';
                           parameters['eventid']   = '$eventID';
                           parameters['userid']    = '$userID';
@@ -225,7 +225,7 @@ abstract class Termin {
   } // @formatter:on
 
   static void zusageUsertermin(int eventID,int userID, [String kommentar]) async{ // @formatter:off
-    var parameters = <String, dynamic>{};
+    var parameters = <String, String>{};
                           parameters['token']     = '${variables.token}';
                           parameters['eventid']   = '$eventID';
                           parameters['userid']    = '$userID';
@@ -246,18 +246,18 @@ abstract class Termin {
   static void bearbeiteTermin(int eventID,
       [String name, String beschreibung, String ort, DateTime startDatum, DateTime endDatum,
       int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async{
-    var parameters = <String, dynamic>{};
-                             parameters['token']        = variables.token;
-                             parameters['eventid']      = eventID;
-    if(name         != null) parameters['name']         = name;
-    if(beschreibung != null) parameters['beschreibung'] = beschreibung;
-    if(ort          != null) parameters['ort']          = ort;
-    if(startDatum   != null) parameters['startdatum']   = startDatum;
-    if(endDatum     != null) parameters['enddatum']     = endDatum;
-    if(plaetze      != null) parameters['plaetze']      = plaetze;
-    if(oeffentlich  != null) parameters['oeffentlich']  = oeffentlich;
-    if(sichtbarAb   != null) parameters['sichtbarab']   = sichtbarAb;
-    if(anmeldungBis != null) parameters['anmeldungbis'] = anmeldungBis;
+    var parameters = <String, String>{};
+                             parameters['token']        = '${variables.token}';
+                             parameters['eventid']      = '$eventID';
+    if(name         != null) parameters['name']         = '$name';
+    if(beschreibung != null) parameters['beschreibung'] = '$beschreibung';
+    if(ort          != null) parameters['ort']          = '$ort';
+    if(startDatum   != null) parameters['startdatum']   = '$startDatum';
+    if(endDatum     != null) parameters['enddatum']     = '$endDatum';
+    if(plaetze      != null) parameters['plaetze']      = '$plaetze';
+    if(oeffentlich  != null) parameters['oeffentlich']  = '$oeffentlich';
+    if(sichtbarAb   != null) parameters['sichtbarab']   = '$sichtbarAb';
+    if(anmeldungBis != null) parameters['anmeldungbis'] = '$anmeldungBis';
 
     var _response = await http.patch('${variables.url}/admin/termin', body: parameters);
     if(_response.statusCode != 204){
