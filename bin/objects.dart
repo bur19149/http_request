@@ -386,7 +386,7 @@ class UserTermin {
 
   set zyklus(Zyklus value) {
     if (value == null) {
-      throw Exception('Null übergabe.');
+      throw Exception('Null uebergabe.');
     } else {
       _zyklus = value;
     }
