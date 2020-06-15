@@ -295,7 +295,8 @@ class UserTermin {
   /// Konstruktor
   UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name,
       String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
-      DateTime timeBis, Zyklus zyklus, DateTime zyklusEnde, List<AntwortTermin> teilnehmer) {
+      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer,
+      [DateTime zyklusEnde] /* <-- zur debugging zwecken optional */) {
     this.plaetze           = plaetze;
     this.terminID         = terminID;
     this.veranstaltungsID = veranstaltungsID;
@@ -402,6 +403,7 @@ class UserTermin {
   DateTime get timeVon          => _timeVon;
   DateTime get timeBis          => _timeBis;
   Zyklus   get zyklus           => _zyklus;
+  DateTime get zyklusEnde       => _zyklusEnde;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
