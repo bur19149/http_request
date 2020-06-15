@@ -228,45 +228,22 @@ class Permission {
   // -------------------------------- Variablen -------------------------------
 
   // @formatter:off
-  int    _permissionID; // einzigartige ID
-  String description;   // Beschreibung der Berechtigung
-  String name;
-  String _code;         // Berechtigungscode z. B. termin.bearbeiten
+  final int    permissionID; // einzigartige ID
+  final String description;  // Beschreibung der Berechtigung
+  final String name;
+  final String code;         // Berechtigungscode z. B. termin.bearbeiten
   // @formatter:on
 
   // ----------------------------- Konstruktoren ------------------------------
 
-  // @formatter:off
   /// Konstruktor
-  Permission(int permissionID, String name, String description, String code) {
-    this.permissionID = permissionID;
-    this.name         = name;
-    this.description  = description;
-    this.code         = code;
-  } // @formatter:on
-
-  // --------------------------------- Setter ---------------------------------
-
-  set permissionID(int value) {
-    _permissionID = pruefungen.prufeID(value);
-  }
-
-  set code(String value) {
-    _code = pruefungen.stringPrufung(value);
-  }
-
-  // --------------------------------- Getter ---------------------------------
-
-  // @formatter:off
-  int    get permissionID => _permissionID;
-  String get code         => _code;
-  // @formatter:on
+  const Permission(this.permissionID, this.description, this.name, this.code);
 
   // -------------------------------- toString --------------------------------
 
   @override
   String toString() {
-    return 'Berechtigung: $name ($_permissionID)\nBeschreibung: $description\nCode:         $_code';
+    return 'Berechtigung: $name ($permissionID)\nBeschreibung: $description\nCode:         $code';
   }
 }
 
