@@ -54,6 +54,7 @@ class User {
     _nachname = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
+  ///Wegen der API ist der String Datentyp nötig.
   set plz(String value) {
     //wann man "value" auf int setzt schreit der DUMME kompiler.
     var megaGay = int.parse(pruefungen.stringPrufung(value)); //workaround
@@ -70,14 +71,14 @@ class User {
 
   set typ(UserTyp value) {
     if (value == null) {
-      throw Exception('Null übergabe');
+      throw Exception('Null übergabe.');
     } else {
       _typ = value;
     }
   }
 
-  /// Die eingegebene E-Mail Adresse wird mit einer Regular Expression überprüft
-  /// und mit nem Pusch wird geschaut ob mehr als ein "@" drinnen ist kann Verbessert werden
+  /// Die eingegebene E-Mail Adresse wird mit einer Regular Expression überprüft und mit
+  /// einem Pusch wird geschaut ob mehr als ein "@" drinnen ist kann Verbessert werden
   set email(String value) {
     value = pruefungen.stringPrufung(value);
     RegExp abc = RegExp(
@@ -318,7 +319,7 @@ class UserTermin {
     if(value == null) {
       throw ('Error: Das Datum ist Null.');
     } else {
-      _zyklusEnde=value;
+      _zyklusEnde = value;
     }
   }
 
@@ -344,9 +345,9 @@ class UserTermin {
 
   set timeVon(DateTime value) {
     if (value == null) {
-      throw ('Error:Das Datum ist Null.');
+      throw ('Error: Das Datum ist Null.');
     } else if (_timeVon != null && value.isAfter(_timeBis)) {
-      throw ('Error:Das Datum ist nach dem Ende.');
+      throw ('Error: Das Datum ist nach dem Ende.');
     } else {
       _timeVon = value;
     }
@@ -354,7 +355,7 @@ class UserTermin {
 
   set timeBis(DateTime value) {
     if (value == null) {
-      throw ('Error:Das Datum ist Null.');
+      throw ('Error: Das Datum ist Null.');
     } else if (_timeVon != null && value.isBefore(_timeVon)) {
       throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
     } else {
