@@ -1,10 +1,12 @@
 import 'package:http/http.dart' as http;
+
 //import 'debug.dart' as debug;
 import 'variables.dart' as variables;
 import '../objects.dart' as objects;
 import '../converter.dart' as converter;
 import 'dart:convert' as convert;
-  //@formatter:off
+
+//@formatter:off
   anmeldungTermin(String token, int eventID, [int userID]) async{
     var parameters = <String, dynamic>{};
                      parameters['token']   = token;
@@ -37,12 +39,20 @@ import 'dart:convert' as convert;
       throw Exception('Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
     }
   }
-  //@formatter:on
+//@formatter:on
 
-  Future<List<objects.UserTermin>> requestMeineTermine() async {
-  var _response = await http.get('${variables.url}/meine-termine?token=${variables.token}');
+/// "4.7.4 Meine Termine
+/// Endpunkt, um eigene Termine anzeigen zu lassen. Es werden nur Termine angezeigt, die noch nicht
+/// stattgefunden haben und zu denen der User oder ein verbundener Account angemeldet ist. Die
+/// Leiter Antwort ist dabei egal. [...]"
+///
+/// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+Future<List<objects.UserTermin>> requestMeineTermine() async {
+  var _response =
+      await http.get('${variables.url}/meine-termine?token=${variables.token}');
   if (_response.statusCode != 200) {
-    throw Exception('Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
+    throw Exception(
+        'Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
   }
   var terminliste = <objects.UserTermin>[];
   for (var termin in convert.jsonDecode(_response.body)['termine']) {
@@ -53,17 +63,27 @@ import 'dart:convert' as convert;
 
 // TODO Exception-Handling hier ev. noch einmal überarbeiten
 Future<objects.UserTermin> requestTermin(int eventID) async {
-  var _response = await http.get('${variables.url}/termin?token=${variables.token}&eventid=$eventID');
+  var _response = await http
+      .get('${variables.url}/termin?token=${variables.token}&eventid=$eventID');
   if (_response.statusCode != 200) {
-    throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+    throw Exception(
+        'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
   }
   return converter.jsonToTermin(convert.jsonDecode(_response.body)['termin']);
 }
 
+/// "4.7.5 Alle Termine
+/// Endpunkt, um alle anstehenden Termine anzeigen zu lassen. Es werden nur Termine angezeigt, die
+/// noch nicht stattgefunden haben und die als sichtbar eingetragen sind. Es werden auch Termine
+/// angezeigt, bei denen die Anmeldung bereits beendet ist. [...]"
+///
+/// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
 Future<List<objects.UserTermin>> requestAlleTermine() async {
-  var _response = await http.get('${variables.url}/termin?token=${variables.token}');
+  var _response =
+      await http.get('${variables.url}/termin?token=${variables.token}');
   if (_response.statusCode != 200) {
-    throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+    throw Exception(
+        'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
   }
   var terminliste = <objects.UserTermin>[];
   for (var termin in convert.jsonDecode(_response.body)['termine']) {

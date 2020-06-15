@@ -4,23 +4,23 @@ import 'variables.dart' as variables;
 import '../objects.dart' as objects;
 import 'dart:convert' as convert;
 
-
-Future<List<objects.Zyklus>> requestZyklen() async {
-  var _response =
-      await http.get('${variables.url}/zyklus?token=${variables.token}');
+/// "4.7.15 Zyklus abfragen
+/// Endpunkt, um alle Termin Wiederholzyklen zu bekommen. [...]"
+///
+/// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+Future<List<objects.Zyklus>> requestZyklen() async { // @formatter:off
+  var _response = await http.get('${variables.url}/zyklus?token=${variables.token}');
   if (_response.statusCode != 200) {
-    throw Exception(
-        'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+    throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
   }
   var zyklen = <objects.Zyklus>[];
   for (var zyklus in convert.jsonDecode(_response.body)['zyklus_list']) {
     zyklen.add(converter.jsonToZyklus(zyklus));
   }
   return zyklen;
-}
+} // @formatter:on
 
 abstract class User {
-
   //TODO for GUI PGM'er pfuefung ob mindestens ein optionaler Parameter dabei sind
   // @formatter:off
   static bearbeiteUser(String token, int userID,
@@ -51,16 +51,16 @@ abstract class User {
   }
   // @formatter:on
 
-  static loescheUser(int id) async{
+  static loescheUser(int id) async { // @formatter:off
     var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
-    if(_response.statusCode!=204){
-      if(_response.statusCode==404){
+    if (_response.statusCode != 204) {
+      if (_response.statusCode == 404) {
         throw Exception('Der User Existiert nicht.');
-      }else{
+      } else {
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
     }
-  }
+  } // @formatter:on
 
 //TODO funktioniert nicht
 //  static void erstelleUser(
@@ -86,44 +86,87 @@ abstract class User {
 //    }
 //  }
 
-  static Future<objects.User> requestUser(int userID) async {
-    var _response = await http.get(
-        '${variables.url}/admin/user?token=${variables.token}&userid=${userID}');
+  /// "4.7.25 Admin User Daten
+  /// Endpunkt, um die Daten über einen User zu bekommen. Es muss die Userid [...]
+  /// übergeben werden."
+  ///
+  /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+  static Future<objects.User> requestUser(int userID) async { // @formatter:off
+    var _response = await http.get('${variables.url}/admin/user?token=${variables.token}&userid=${userID}');
     if (_response.statusCode != 200) {
-      throw Exception(
-          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
     }
-    return converter
-        .jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
-  }
+    return converter.jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
+  } // @formatter:on
 
-  static Future<List<objects.User>> requestUserListe() async {
-    var _response =
-        await http.get('${variables.url}/admin/user?token=${variables.token}');
+  /// "4.7.24 Admin Userliste
+  /// Endpunkt, um eine Userliste nach ID sortiert von allen Usern zu bekommen. [...]"
+  ///
+  /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+  static Future<List<objects.User>> requestUserListe() async { // @formatter:off
+    var _response = await http.get('${variables.url}/admin/user?token=${variables.token}');
     if (_response.statusCode != 200) {
-      throw Exception(
-          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
     }
     var userliste = <objects.User>[];
     for (var user in convert.jsonDecode(_response.body)['data']['users']) {
       userliste.add(converter.jsonToUser(user));
     }
     return userliste;
-  }
+  } // @formatter:on
 }
 
 abstract class Termin {
-  static Future<objects.AdminTermin> requestTermin(int eventID) async {
+
+  static void erstelleTermin(objects.AdminTermin termin) async { // @formatter:off
+    var _parameters = <String, dynamic>{};
+                                      _parameters['token']        = variables.token;
+                                      _parameters['name']         = termin.name;
+                                      _parameters['beschreibung'] = termin.beschreibung;
+                                      _parameters['ort']          = termin.ort;
+                                      _parameters['start_datum']  = termin.timeVon;
+                                      _parameters['end_datum']    = termin.timeBis;
+                                      _parameters['zyklusid']     = termin.zyklus.zyklusID;
+//                                    _parameters['zyklus_ende']  = termin.zyklus. TODO
+                                      _parameters['plaetze']      = termin.plaetze;
+    if(termin.freigeschaltet != null) _parameters['oeffentlich']  = termin.freigeschaltet;
+    if(termin.anmeldungStart != null) _parameters['sichtbar_ab']  = termin.anmeldungStart;
+    if(termin.anmeldungEnde  != null) _parameters['sichtbar_bis'] = termin.anmeldungEnde;
+
+    var _response = await http.post('${variables.url}/admin/termin', body: _parameters);
+    if (_response.statusCode != 201) {
+      if (_response.statusCode == 400) {
+        throw Exception('Termin konnte nicht angelegt werden.');
+      } else if (_response.statusCode == 422) {
+        throw Exception('Ein Parameter fehlt.');
+      }
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+    }
+  } // @formatter:on
+
+  /// "4.7.17 Admin Termin anzeigen
+  /// Endpunkt, um den Termin, alle Anmeldungen, und alle Abmeldungen anzuzeigen. Als Parameter
+  /// \[wird\] die Terminid [...] übergeben."
+  ///
+  /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+  static Future<objects.AdminTermin> requestTermin(int eventID) async { // @formatter:off
     var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&eventid=$eventID');
     if (_response.statusCode != 200) {
-      throw Exception(
-          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
     }
     return converter.jsonToTermin(convert.jsonDecode(_response.body)['termin']);
-  }
+  } // @formatter:on
 
-  static Future<List<objects.UserTermin>> requestTerminListe(bool archive) async {
-    var _response=await http.get('${variables.url}/admin/termin?token=${variables.token}&archive=$archive');
+  /// "4.7.16 Admin Terminliste
+  /// Endpunkt, um alle Termine anzufragen. Es werden alle Termine, auch noch nicht veröffentlichte,
+  /// sortiert nach ID ausgegeben. Wenn der Parameter archive auf true gesetzt ist werden alle Termine
+  /// bis zum aktuellen Zeitpunkt ausgegeben. Ist archive false werden alle anstehenden, Termin Start in
+  /// der Zukunft, ausgegeben. Parameter \[ist\] archive [...]"
+  ///
+  /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+  static Future<List<objects.UserTermin>> requestTerminListe( // @formatter:off
+      bool archive) async {
+    var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&archive=$archive');
     if (_response.statusCode != 200) {
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
@@ -132,14 +175,18 @@ abstract class Termin {
       terminliste.add(converter.jsonToTermin(termin));
     }
     return terminliste;
-  }
+  } // @formatter:on
 
-  static void terminLoeschen(int id) async {
+  /// "4.7.20 Admin Termin löschen
+  /// Endpunkt, um einen Termin zu löschen. Es \[wird\] die Terminid [...] übergeben."
+  ///
+  /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+  static void terminLoeschen(int id) async { // @formatter:off
     var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
     if (_response.statusCode != 204) {
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
-  }
+  } // @formatter:on
 
   //@formatter:off
   addUserZuTermin(String token, int eventID, [String kommentar, bool bestaetigt]) async{
@@ -162,19 +209,22 @@ abstract class Termin {
   }
 
   //TODO API Dokumentation ist noch nicht fertig.
-  absageUserTermin(String token, int eventID, [int userID]) async{
+  absageUserTermin(String token, int eventID, [int userID]) async{ // @formatter:off
     var parameters = <String, dynamic>{};
                        parameters['token']   = token;
                        parameters['eventid'] = eventID;
     if(userID != null) parameters['userid']  = userID;
 
     var _response = await http.patch('${variables.url}/termin/abmelden', body: parameters);
-    if(_response.statusCode!=204){
+    if (_response.statusCode != 204) {
+      if(_response.statusCode == 404) {
+        throw Exception('Termin oder User existiert nicht!');
+      }
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
-  }
+  } // @formatter:on
 
-  zusageUsertermin(String token, int eventID,[int userID]) async{
+  zusageUsertermin(String token, int eventID,[int userID]) async{ // @formatter:off
     var parameters = <String, dynamic>{};
                        parameters['token']   = token;
                        parameters['eventid'] = eventID;

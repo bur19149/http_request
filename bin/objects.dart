@@ -167,9 +167,9 @@ class Admin extends User {
   @override
   String toString() {
     return super.toString() +
-        (dsgvo     != null && dsgvo.isNotEmpty     ? 'DSGVO:        $dsgvo\n'     : '') +
-        (anmeldung != null && anmeldung.isNotEmpty ? 'Anmeldung:    $anmeldung\n' : '') +
-        (portal    != null && portal.isNotEmpty    ? 'Portal:       $portal'      : '');
+        (dsgvo     != null && dsgvo.isNotEmpty     ? 'DSGVO:     $dsgvo\n'     : '') +
+        (anmeldung != null && anmeldung.isNotEmpty ? 'Anmeldung: $anmeldung\n' : '') +
+        (portal    != null && portal.isNotEmpty    ? 'Portal:    $portal'      : '');
   } // @formatter:on
 }
 

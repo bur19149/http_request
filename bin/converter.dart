@@ -121,5 +121,6 @@ objects.Antwort jsonToAntwort(LinkedHashMap jsonAsList) {
 }
 
 objects.Zyklus jsonToZyklus(LinkedHashMap jsonAsList) {
-  return objects.Zyklus(jsonAsList['zyklusid'] ?? jsonAsList['id'], jsonAsList['name']);
+  return objects.Zyklus(
+      jsonAsList['zyklusid'] ?? jsonAsList['id'], jsonAsList['name']);
 }
