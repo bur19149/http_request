@@ -51,8 +51,7 @@ import 'dart:convert' as convert;
 ///
 /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
 Future<List<objects.UserTermin>> requestMeineTermine() async { //@formatter:off
-  var _response =
-      await http.get('${variables.url}/meine-termine?token=${variables.token}');
+  var _response = await http.get('${variables.url}/meine-termine?token=${variables.token}');
   if (_response.statusCode != 200) {
     throw Exception('Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
   }
@@ -80,16 +79,14 @@ Future<objects.UserTermin> requestTermin(int eventID) async {
 /// angezeigt, bei denen die Anmeldung bereits beendet ist. [...]"
 ///
 /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
-Future<List<objects.UserTermin>> requestAlleTermine() async {
-  var _response =
-      await http.get('${variables.url}/termin?token=${variables.token}');
+Future<List<objects.UserTermin>> requestAlleTermine() async { //@foramtter:off
+  var _response = await http.get('${variables.url}/termin?token=${variables.token}');
   if (_response.statusCode != 200) {
-    throw Exception(
-        'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
+    throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
   }
   var terminliste = <objects.UserTermin>[];
   for (var termin in convert.jsonDecode(_response.body)['termine']) {
     terminliste.add(converter.jsonToTermin(termin));
   }
   return terminliste;
-}
+} //@formatter:on
