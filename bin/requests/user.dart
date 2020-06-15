@@ -30,8 +30,8 @@ import 'dart:convert' as convert;
 //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
   void abmeldungTermin(int eventID, [int userID]) async{ // @formatter:off
   var parameters = <String, String>{};
-  parameters['token']   = variables.token;
-  parameters['eventid'] = '$eventID';
+                     parameters['token']   = '${variables.token}';
+                     parameters['eventid'] = '$eventID';
   if(userID != null) parameters['userid']  = '$userID';
 
   var _response = await http.patch('${variables.url}/termin/abmelden', body: parameters);
@@ -50,19 +50,18 @@ import 'dart:convert' as convert;
 /// Leiter Antwort ist dabei egal. [...]"
 ///
 /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
-Future<List<objects.UserTermin>> requestMeineTermine() async {
+Future<List<objects.UserTermin>> requestMeineTermine() async { //@formatter:off
   var _response =
       await http.get('${variables.url}/meine-termine?token=${variables.token}');
   if (_response.statusCode != 200) {
-    throw Exception(
-        'Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
+    throw Exception('Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
   }
   var terminliste = <objects.UserTermin>[];
   for (var termin in convert.jsonDecode(_response.body)['termine']) {
     terminliste.add(converter.jsonToTermin(termin));
   }
   return terminliste;
-}
+}//@formatter:on
 
 // TODO Exception-Handling hier ev. noch einmal überarbeiten
 Future<objects.UserTermin> requestTermin(int eventID) async {
