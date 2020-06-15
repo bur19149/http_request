@@ -315,12 +315,13 @@ class UserTermin {
 
   // --------------------------------- Setter ---------------------------------
 
+  //TODO vorrübergehende NULL Prüfung auskommentiert.
   set zyklusEnde(DateTime value) {
-    if(value == null) {
-      throw ('Error: Das Datum ist Null.');
-    } else {
+  //  if(value == null) {
+  //    throw ('Error: Das Datum ist Null.');
+  //  } else {
       _zyklusEnde = value;
-    }
+  //  }
   }
 
   set anmeldungStart(DateTime value) {

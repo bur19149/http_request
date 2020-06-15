@@ -23,7 +23,7 @@ Future<List<objects.Zyklus>> requestZyklen() async { // @formatter:off
 abstract class User {
   //TODO for GUI PGM'er pfuefung ob mindestens ein optionaler Parameter dabei sind
   // @formatter:off
-  static bearbeiteUser(String token, int userID,
+  static void bearbeiteUser(String token, int userID,
       [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
         int berechtigung, int elternID, String elternmail]) async{
 
@@ -50,7 +50,7 @@ abstract class User {
     }
   }// @formatter:on
 
-  static loescheUser(int id) async { // @formatter:off
+  static void loescheUser(int id) async { // @formatter:off
     var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
     if (_response.statusCode != 204) {
       if (_response.statusCode == 404) {
@@ -188,7 +188,7 @@ abstract class Termin {
   } // @formatter:on
 
   //@formatter:off
-  addUserZuTermin(String token, int eventID, [String kommentar, bool bestaetigt]) async{
+  static void addUserZuTermin(String token, int eventID, [String kommentar, bool bestaetigt]) async{
     var parameters = <String, dynamic>{};
                            parameters['token']      = token;
                            parameters['eventid']    = eventID;
@@ -208,13 +208,14 @@ abstract class Termin {
   }//@foramtter:on
 
   //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
-  absageUserTermin(String token, int eventID, [int userID]) async{ // @formatter:off
+  static void absageUserTermin(int eventID, int userID, [String kommentar]) async{ // @formatter:off
     var parameters = <String, dynamic>{};
-                       parameters['token']   = token;
-                       parameters['eventid'] = eventID;
-    if(userID != null) parameters['userid']  = userID;
+                          parameters['token']     = '${variables.token}';
+                          parameters['eventid']   = '$eventID';
+                          parameters['userid']    = '$userID';
+    if(kommentar != null) parameters['kommentar'] = '$kommentar';
 
-    var _response = await http.patch('${variables.url}/termin/abmelden', body: parameters);
+    var _response = await http.patch('${variables.url}/admin/termin/absagen', body: parameters);
     if (_response.statusCode != 204) {
       if(_response.statusCode == 404) {
         throw Exception('Termin oder User existiert nicht!');
@@ -223,20 +224,17 @@ abstract class Termin {
     }
   } // @formatter:on
 
-  zusageUsertermin(String token, int eventID,[int userID]) async{ // @formatter:off
+  static void zusageUsertermin(int eventID,int userID, [String kommentar]) async{ // @formatter:off
     var parameters = <String, dynamic>{};
-                       parameters['token']   = token;
-                       parameters['eventid'] = eventID;
-    if(userID != null) parameters['userid']  = userID;
+                          parameters['token']     = '${variables.token}';
+                          parameters['eventid']   = '$eventID';
+                          parameters['userid']    = '$userID';
+    if(kommentar != null) parameters['kommentar'] = '$kommentar';
 
-    var _response = await http.patch('${variables.url}/termin/anmelden', body: parameters);
-    if (_response.statusCode != 201 || _response.statusCode != 204) {
+    var _response = await http.patch('${variables.url}/admin/termin/zusagen', body: parameters);
+    if (_response.statusCode != 204) {
       if (_response.statusCode == 404) {
         throw Exception('UserID oder Termin ist unbekannt.');
-      } else if(_response.statusCode == 423) {
-        throw Exception('Der Termin ist noch nicht für User sichtbar.');
-      } else if(_response.statusCode == 410) {
-        throw Exception('Die Anmeldung ist geschlossen.');
       } else {
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
@@ -245,11 +243,11 @@ abstract class Termin {
 
   //@formatter:off
   //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
-  bearbeiteTermin(String token, int eventID,
+  static void bearbeiteTermin(int eventID,
       [String name, String beschreibung, String ort, DateTime startDatum, DateTime endDatum,
       int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async{
     var parameters = <String, dynamic>{};
-                             parameters['token']        = token;
+                             parameters['token']        = variables.token;
                              parameters['eventid']      = eventID;
     if(name         != null) parameters['name']         = name;
     if(beschreibung != null) parameters['beschreibung'] = beschreibung;

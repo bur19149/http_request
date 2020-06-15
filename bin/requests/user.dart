@@ -27,19 +27,22 @@ import 'dart:convert' as convert;
     }
   }
 
-  //TODO in der Dolu sind die ERROR Codes nicht Dokumentiert [-> Unfinished]
-  abmeldungTermin(String token, eventID, [int userID]) async{
-    var parameters = <String, dynamic>{};
-                       parameters['token']   = token;
-                       parameters['eventid'] = eventID;
-    if(userID != null) parameters['userid']  = userID;
+//TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
+  void abmeldungTermin(int eventID, [int userID]) async{ // @formatter:off
+  var parameters = <String, dynamic>{};
+  parameters['token']   = variables.token;
+  parameters['eventid'] = '$eventID';
+  if(userID != null) parameters['userid']  = '$userID';
 
-    var _response = await http.post('${variables.url}/termin/abmelden/', body: parameters);
-    if(_response.statusCode!=204){
-      throw Exception('Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
+  var _response = await http.patch('${variables.url}/termin/abmelden', body: parameters);
+  if (_response.statusCode != 204) {
+    if(_response.statusCode == 404) {
+      throw Exception('Termin oder User existiert nicht!');
+    }else{
+      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
   }
-//@formatter:on
+} // @formatter:on
 
 /// "4.7.4 Meine Termine
 /// Endpunkt, um eigene Termine anzeigen zu lassen. Es werden nur Termine angezeigt, die noch nicht
