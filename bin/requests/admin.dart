@@ -48,8 +48,7 @@ abstract class User {
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
     }
-  }
-  // @formatter:on
+  }// @formatter:on
 
   static loescheUser(int id) async { // @formatter:off
     var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
@@ -200,13 +199,13 @@ abstract class Termin {
     if(_response.statusCode!=201){
       if(_response.statusCode==404){
         throw Exception('User oder Event ist unbekannt.');
-      }else if(_response.statusCode==400){
+      }else if(_response.statusCode == 400){
         throw Exception('Der User ist schon im Termin eingetragen.');
       }else{
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
     }
-  }
+  }//@foramtter:on
 
   //TODO API Dokumentation ist noch nicht fertig.
   absageUserTermin(String token, int eventID, [int userID]) async{ // @formatter:off
@@ -241,9 +240,10 @@ abstract class Termin {
       }else{
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
-    }
+    }//@foramtter:on
   }
 
+  //@formatter:off
   //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
   bearbeiteTermin(String token, int eventID,
       [String name, String beschreibung, String ort, DateTime startDatum, DateTime endDatum,
@@ -262,9 +262,8 @@ abstract class Termin {
     if(anmeldungBis != null) parameters['anmeldungbis'] = anmeldungBis;
 
     var _response = await http.patch('${variables.url}/admin/termin', body: parameters);
-    if(_response.statusCode!=204){
+    if(_response.statusCode != 204){
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
-  }
-  //@formatter:on
+  }//@formatter:on
 }

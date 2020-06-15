@@ -280,6 +280,7 @@ class UserTermin {
   String              ort;
   String              name;
   String              _beschreibung;
+  DateTime            _zyklusEnde;
   DateTime            _anmeldungStart;
   DateTime            _anmeldungEnde;
   DateTime            _timeVon;
@@ -294,7 +295,7 @@ class UserTermin {
   /// Konstruktor
   UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name,
       String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
-      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer) {
+      DateTime timeBis, Zyklus zyklus, DateTime zyklusEnde, List<AntwortTermin> teilnehmer) {
     this.plaetze           = plaetze;
     this.terminID         = terminID;
     this.veranstaltungsID = veranstaltungsID;
@@ -307,9 +308,18 @@ class UserTermin {
     this.timeBis          = timeBis;
     this.zyklus           = zyklus;
     this.teilnehmer       = teilnehmer;
+    this.zyklusEnde       = zyklusEnde;
   } //formatter:on
 
   // --------------------------------- Setter ---------------------------------
+
+  set zyklusEnde(DateTime value) {
+    if(value == null) {
+      throw ('Error: Das Datum ist Null.');
+    } else {
+      _zyklusEnde=value;
+    }
+  }
 
   set anmeldungStart(DateTime value) {
     if (value == null) {
@@ -323,7 +333,7 @@ class UserTermin {
 
   set anmeldungEnde(DateTime value) {
     if (value == null) {
-      throw ('Error:Das Datum ist Null.');
+      throw ('Error: Das Datum ist Null.');
     } else if (_timeVon != null && value.isBefore(_timeVon)) {
       throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
     } else {
@@ -425,9 +435,10 @@ class AdminTermin extends UserTermin {
   /// Konstruktor
   AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name,
       String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
-      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet)
+      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet,
+      DateTime zyklusEnde)
       : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart,
-      anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer) {
+      anmeldungEnd, timeVon, timeBis, zyklus, zyklusEnde, teilnehmer) {
     this.freigeschaltet = freigeschaltet;
   } // @formatter:on
 
