@@ -438,9 +438,9 @@ class AdminTermin extends UserTermin {
   AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name,
       String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
       DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet,
-      DateTime zyklusEnde)
+      [DateTime zyklusEnde])
       : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart,
-      anmeldungEnd, timeVon, timeBis, zyklus, zyklusEnde, teilnehmer) {
+      anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer, zyklusEnde) {
     this.freigeschaltet = freigeschaltet;
   } // @formatter:on
 
