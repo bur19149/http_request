@@ -9,9 +9,9 @@ import 'dart:convert' as convert;
 //@formatter:off
   anmeldungTermin(String token, int eventID, [int userID]) async{
     var parameters = <String, dynamic>{};
-                     parameters['token']   = token;
-                     parameters['eventid'] = eventID;
-    if(userID!=null) parameters['userid']  = userID;
+                       parameters['token']   = token;
+                       parameters['eventid'] = eventID;
+    if(userID != null) parameters['userid']  = userID;
 
     var _response = await http.patch('${variables.url}/termin/anmelden/', body: parameters);
     if(_response.statusCode!=201||_response.statusCode!=204){
@@ -30,9 +30,9 @@ import 'dart:convert' as convert;
   //TODO in der Dolu sind die ERROR Codes nicht Dokumentiert [-> Unfinished]
   abmeldungTermin(String token, eventID, [int userID]) async{
     var parameters = <String, dynamic>{};
-                     parameters['token']   = token;
-                     parameters['eventid'] = eventID;
-    if(userID!=null) parameters['userid']  = userID;
+                       parameters['token']   = token;
+                       parameters['eventid'] = eventID;
+    if(userID != null) parameters['userid']  = userID;
 
     var _response = await http.post('${variables.url}/termin/abmelden/', body: parameters);
     if(_response.statusCode!=204){

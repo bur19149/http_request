@@ -13,6 +13,6 @@ main(List<String> arguments) async {
 //  await admin.Termin.terminLoeschen(38);
 //  debug.printListe(await admin.Termin.requestTerminListe(true));
 //  debug.printListe(await user.requestAlleTermine());
-//  debug.printListe(await user.requestMeineTermine());
+  debug.printListe(await user.requestMeineTermine());
 //  print(await user.requestTermin(31));
 }

@@ -28,17 +28,17 @@ abstract class User {
         int berechtigung, int elternID, String elternmail]) async{
 
     var parameter = <String, dynamic>{};
-                            parameter['token']        = token;
-                            parameter['userid']       = userID;
-    if(vorname!=null)       parameter['vorname']      = vorname;
-    if(nachname!=null)      parameter['nachname']     = nachname;
-    if(email!=null)         parameter['email']        = email;
-    if(plz!=null)           parameter['plz']          = plz;
-    if(ort!=null)           parameter['ort']          = ort;
-    if(jugendgruppe!=null)  parameter['jugendgruppe'] = jugendgruppe;
-    if(berechtigung!= null) parameter['berechtigung'] = berechtigung;
-    if(elternID!=null)      parameter['elternID']     = elternID;
-    if(elternmail!=null)    parameter['elternmail']   = elternmail;
+                             parameter['token']        = token;
+                             parameter['userid']       = userID;
+    if(vorname      != null) parameter['vorname']      = vorname;
+    if(nachname     != null) parameter['nachname']     = nachname;
+    if(email        != null) parameter['email']        = email;
+    if(plz          != null) parameter['plz']          = plz;
+    if(ort          != null) parameter['ort']          = ort;
+    if(jugendgruppe != null) parameter['jugendgruppe'] = jugendgruppe;
+    if(berechtigung != null) parameter['berechtigung'] = berechtigung;
+    if(elternID     != null) parameter['elternID']     = elternID;
+    if(elternmail   != null) parameter['elternmail']   = elternmail;
 
     var _response = await http.patch('${variables.url}/admin/user/', body: parameter);
     if(_response.statusCode!=204){
@@ -207,7 +207,7 @@ abstract class Termin {
     }
   }//@foramtter:on
 
-  //TODO API Dokumentation ist noch nicht fertig.
+  //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
   absageUserTermin(String token, int eventID, [int userID]) async{ // @formatter:off
     var parameters = <String, dynamic>{};
                        parameters['token']   = token;
@@ -230,14 +230,14 @@ abstract class Termin {
     if(userID != null) parameters['userid']  = userID;
 
     var _response = await http.patch('${variables.url}/termin/anmelden', body: parameters);
-    if(_response.statusCode!=201||_response.statusCode!=204){
-      if(_response.statusCode==404){
+    if (_response.statusCode != 201 || _response.statusCode != 204) {
+      if (_response.statusCode == 404) {
         throw Exception('UserID oder Termin ist unbekannt.');
-      }else if(_response.statusCode==423){
+      } else if(_response.statusCode == 423) {
         throw Exception('Der Termin ist noch nicht für User sichtbar.');
-      }else if(_response.statusCode==410){
+      } else if(_response.statusCode == 410) {
         throw Exception('Die Anmeldung ist geschlossen.');
-      }else{
+      } else {
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
     }//@foramtter:on
@@ -247,7 +247,7 @@ abstract class Termin {
   //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
   bearbeiteTermin(String token, int eventID,
       [String name, String beschreibung, String ort, DateTime startDatum, DateTime endDatum,
-        int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async{
+      int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async{
     var parameters = <String, dynamic>{};
                              parameters['token']        = token;
                              parameters['eventid']      = eventID;
