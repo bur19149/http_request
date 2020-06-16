@@ -8,8 +8,7 @@ import '../objects.dart'        as objects;
 /// Nur zu Debuggingzwecken
 /// Wird verwendet um die Reaktion des Servers in der Konsole zu dokumentieren.
 void output(http.Response response) {
-  print('Response status: ${response.statusCode}');
-  print('Response body: ${response.body}');
+  print('Response status: ${response.statusCode}\nResponse body:   ${response.body}');
 }
 
 /// Nur zu Debuggingzwecken

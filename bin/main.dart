@@ -17,17 +17,37 @@ import 'requests/user.dart' as user;
 // TODO unfertige Files
 // * objects.dart
 // * requests/admin.dart
+//      - bearbeiteUser wirft Code 500 (auch in Postman)
+//      - absageUserTermin fehlt
+//      - bearbeiteUser und erstelleUser Parameterübergaben ev. auf User-Objekte ändern
 // * requests/login.dart
 // * requests/variables.dart
 
 main(List<String> arguments) async {
 //  print(await login.requestUser());
+//  admin.User.erstelleUser('Gertrud', 'Müller', 1, '1010', 'Wien', null, null, null, 'raimondo.montecuccoli84@gmail.com');
 //  debug.printListe(await admin.User.requestUserListe());
-//  admin.User.erstelleUser('John', 'Doe', 1, '1010', 'Wien');
+//await admin.User.bearbeiteUser(4, null, 'Schubertus');
+//  print(await admin.User.requestUser(4));
 //  print(await admin.Termin.requestTermin(31));
 //  await admin.Termin.terminLoeschen(38);
-//  debug.printListe(await admin.Termin.requestTerminListe(true));
 //  debug.printListe(await user.requestAlleTermine());
 //  debug.printListe(await user.requestMeineTermine());
 //  print(await user.requestTermin(39));
+  var termin = objects.AdminTermin(
+      3,
+      'Wien',
+      'Prüfung',
+      'Teste ob erstelleTermin funktioniert',
+      DateTime(2020, 7, 20, 3, 19),
+      DateTime(2020, 8, 1, 3, 19),
+      objects.Zyklus(1, 'test'),
+      null,
+      null,
+      null,
+      null,
+      DateTime(2020, 9, 1));
+//  print(termin);
+//    admin.Termin.erstelleTermin(termin);
+//    debug.printListe(await admin.Termin.requestTerminListe(false));
 }

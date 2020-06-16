@@ -91,32 +91,34 @@ objects.UserTermin jsonToTermin(LinkedHashMap jsonAsList) {
   if (jsonAsList['freigeschaltet'] != null) {
     return objects.AdminTermin(
         jsonAsList['plaetze'],
-        jsonAsList['terminid'],
-        jsonAsList['veranstaltungid'],
         jsonAsList['ort'],
         jsonAsList['name'],
         jsonAsList['beschreibung'],
-        DateTime.parse(jsonAsList['anmeldung']['start']),
-        DateTime.parse(jsonAsList['anmeldung']['ende']),
         DateTime.parse(jsonAsList['time']['start']),
         DateTime.parse(jsonAsList['time']['ende']),
         jsonToZyklus(jsonAsList['zyklus']),
         teilnehmer,
-        jsonAsList['freigeschaltet']);
+        jsonAsList['freigeschaltet'],
+        DateTime.parse(jsonAsList['anmeldung']['start']),
+        DateTime.parse(jsonAsList['anmeldung']['ende']),
+        jsonAsList['zyklus_Ende'] != null ? DateTime.parse(jsonAsList['zyklus_Ende']) : null,
+        jsonAsList['terminid'],
+        jsonAsList['veranstaltungid']);
   }
   return objects.UserTermin(
       jsonAsList['plaetze'],
-      jsonAsList['terminid'],
-      jsonAsList['veranstaltungid'],
       jsonAsList['ort'],
       jsonAsList['name'],
       jsonAsList['beschreibung'],
-      DateTime.parse(jsonAsList['anmeldung']['start']),
-      DateTime.parse(jsonAsList['anmeldung']['ende']),
       DateTime.parse(jsonAsList['time']['start']),
       DateTime.parse(jsonAsList['time']['ende']),
       jsonToZyklus(jsonAsList['zyklus']),
-      teilnehmer);
+      teilnehmer,
+      DateTime.parse(jsonAsList['anmeldung']['start']),
+      DateTime.parse(jsonAsList['anmeldung']['ende']),
+      jsonAsList['zyklus_Ende'] != null ? DateTime.parse(jsonAsList['zyklus_Ende']) : null,
+      jsonAsList['terminid'],
+      jsonAsList['veranstaltungid']);
 }
 
 /// Konvertiert ein, mittels jsonDecode aus der dart:convert Library in eine LinkedHashMap konvertiertes, json-File

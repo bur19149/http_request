@@ -1,4 +1,5 @@
 //import 'package:path_provider/path_provider.dart';
+import 'converter.dart' as converter;
 import 'requests/variables.dart' as variables;
 import 'package:http/http.dart' as http;
 import 'pruefungen.dart' as pruefungen;
@@ -253,16 +254,16 @@ class UserTermin {
 
   // @formatter:off
   int                 _plaetze;
-  int                 _terminID;
-  int                 _veranstaltungsID;
+  int                 terminID;
+  int                 veranstaltungsID;
   String              ort;
   String              name;
   String              _beschreibung;
-  DateTime            _zyklusEnde;
-  DateTime            _anmeldungStart;
-  DateTime            _anmeldungEnde;
-  DateTime            _timeVon;
-  DateTime            _timeBis;
+  DateTime            zyklusEnde;
+  DateTime            anmeldungStart;
+  DateTime            anmeldungEnde;
+  DateTime            timeVon;
+  DateTime            timeBis;
   Zyklus              _zyklus;
   List<AntwortTermin> teilnehmer;
   // @formatter:on
@@ -271,10 +272,9 @@ class UserTermin {
 
   // @formatter:off
   /// Konstruktor
-  UserTermin(int plaetze, int terminID, int veranstaltungsID, String ort, String name,
-      String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
-      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer,
-      [DateTime zyklusEnde] /* <-- zur debugging zwecken optional */) {
+  UserTermin(int plaetze, String ort, String name, String beschreibung, DateTime timeVon,
+      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, [DateTime anmeldungStart,
+      DateTime anmeldungEnde, DateTime zyklusEnde, int terminID, int veranstaltungsID]) {
     this.plaetze           = plaetze;
     this.terminID         = terminID;
     this.veranstaltungsID = veranstaltungsID;
@@ -282,7 +282,7 @@ class UserTermin {
     this.name             = name;
     this.beschreibung     = beschreibung;
     this.anmeldungStart   = anmeldungStart;
-    this.anmeldungEnde    = anmeldungEnd;
+    this.anmeldungEnde    = anmeldungEnde;
     this.timeVon          = timeVon;
     this.timeBis          = timeBis;
     this.zyklus           = zyklus;
@@ -291,55 +291,6 @@ class UserTermin {
   } //formatter:on
 
   // --------------------------------- Setter ---------------------------------
-
-  //TODO vorrübergehende NULL Prüfung auskommentiert.
-  set zyklusEnde(DateTime value) {
-  //  if(value == null) {
-  //    throw ('Error: Das Datum ist Null.');
-  //  } else {
-      _zyklusEnde = value;
-  //  }
-  }
-
-  set anmeldungStart(DateTime value) {
-    if (value == null) {
-      throw ('Error:Das Datum ist Null.');
-    } else if (_timeVon != null && value.isAfter(_timeBis)) {
-      throw ('Error:Das Datum ist nach dem Ende.');
-    } else {
-      _anmeldungStart = value;
-    }
-  }
-
-  set anmeldungEnde(DateTime value) {
-    if (value == null) {
-      throw ('Error: Das Datum ist Null.');
-    } else if (_timeVon != null && value.isBefore(_timeVon)) {
-      throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
-    } else {
-      _anmeldungEnde = value;
-    }
-  }
-
-  set timeVon(DateTime value) {
-    if (value == null) {
-      throw ('Error: Das Datum ist Null.');
-    } else if (_timeVon != null && value.isAfter(_timeBis)) {
-      throw ('Error: Das Datum ist nach dem Ende.');
-    } else {
-      _timeVon = value;
-    }
-  }
-
-  set timeBis(DateTime value) {
-    if (value == null) {
-      throw ('Error: Das Datum ist Null.');
-    } else if (_timeVon != null && value.isBefore(_timeVon)) {
-      throw ('Das Enddatum darf nicht vor dem beginn stattfinden.');
-    } else {
-      _timeBis = value;
-    }
-  }
 
   /// Die maximale Anzahl Plätze auf der Website ist 99.
   set plaetze(int value) {
@@ -350,21 +301,13 @@ class UserTermin {
     }
   }
 
-  set terminID(int value) {
-    _terminID = pruefungen.prufeID(value);
-  }
-
-  set veranstaltungsID(int value) {
-    _veranstaltungsID = pruefungen.prufeID(value);
-  }
-
   set beschreibung(String value) {
     _beschreibung = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
   set zyklus(Zyklus value) {
     if (value == null) {
-      throw Exception('Null uebergabe.');
+      throw 'Zyklus darf nicht null sein!';
     } else {
       _zyklus = value;
     }
@@ -374,27 +317,21 @@ class UserTermin {
 
   // @formatter:off
   int      get plaetze          => _plaetze;
-  int      get terminID         => _terminID;
-  int      get veranstaltungsID => _veranstaltungsID;
   String   get beschreibung     => _beschreibung;
-  DateTime get anmeldungStart   => _anmeldungStart;
-  DateTime get anmeldungEnde    => _anmeldungEnde;
-  DateTime get timeVon          => _timeVon;
-  DateTime get timeBis          => _timeBis;
   Zyklus   get zyklus           => _zyklus;
-  DateTime get zyklusEnde       => _zyklusEnde;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
 
   @override
   String toString() {
-    String str = 'Termin:            $name ($_terminID)\nAnzahl Plätze:     '
-        '$_plaetze\nOrt:               $ort\nBeschreibung:      '
-        '$_beschreibung\nVeranstaltungs-ID: $_veranstaltungsID\nAnmeldestart:      '
-        '$_anmeldungStart\nAnmeldeschluss:    $_anmeldungEnde\nUhrzeit:           '
-        '$_timeVon - $_timeBis\n$_zyklus';
-    if (teilnehmer.isNotEmpty) {
+    String str = 'Termin:            $name' + (terminID != null ? ' ($terminID)' : '') + '\nAnzahl Plätze:     '
+        '$_plaetze\nOrt:               $ort\nBeschreibung:      $_beschreibung' + (veranstaltungsID != null ? '\nVeranstaltungs-ID: $veranstaltungsID' : '') +
+        (anmeldungStart != null ? '\nAnmeldestart:      ${converter.dateTimeFormat(anmeldungStart)}' : '') +
+        (anmeldungEnde != null ? '\nAnmeldeschluss:    ${converter.dateTimeFormat(anmeldungEnde)}' : '') + (timeVon != null && timeBis != null ? '\nZeitraum:          '
+        '${converter.dateTimeFormat(timeVon)} - ${converter.dateTimeFormat(timeBis)}' : '') +
+        '\n$_zyklus' + (zyklusEnde != null ? '\nZyklus-Ende:       ${converter.dateFormat(zyklusEnde)}' : '');
+    if (teilnehmer != null && teilnehmer.isNotEmpty) {
       str += '\nTeilnehmer:\n---------------';
       for (AntwortTermin antwortTermin in teilnehmer) {
         str += '\n$antwortTermin\n---------------';
@@ -414,12 +351,10 @@ class AdminTermin extends UserTermin {
 
   // @formatter:off
   /// Konstruktor
-  AdminTermin(int platze, int terminid, int veranstaltungsid, String ort, String name,
-      String beschreibung, DateTime anmeldungStart, DateTime anmeldungEnd, DateTime timeVon,
-      DateTime timeBis, Zyklus zyklus, List<AntwortTermin> teilnehmer, bool freigeschaltet,
-      [DateTime zyklusEnde])
-      : super(platze, terminid, veranstaltungsid, ort, name, beschreibung, anmeldungStart,
-      anmeldungEnd, timeVon, timeBis, zyklus, teilnehmer, zyklusEnde) {
+  AdminTermin(int platze, String ort, String name,
+      String beschreibung, DateTime timeVon, DateTime timeBis, Zyklus zyklus, [List<AntwortTermin> teilnehmer, bool freigeschaltet,
+      DateTime anmeldungStart, DateTime anmeldungEnde, DateTime zyklusEnde, int terminid, int veranstaltungsid])
+      : super(platze, ort, name, beschreibung, timeVon, timeBis, zyklus, teilnehmer, anmeldungStart, anmeldungEnde, zyklusEnde, terminid, veranstaltungsid) {
     this.freigeschaltet = freigeschaltet;
   } // @formatter:on
 
@@ -427,7 +362,7 @@ class AdminTermin extends UserTermin {
 
   @override
   String toString() {
-    return super.toString() + '\nfreigeschaltet:    $freigeschaltet';
+    return super.toString() + (freigeschaltet != null ? '\nfreigeschaltet:    $freigeschaltet' : '');
   }
 }
 

@@ -1,9 +1,16 @@
+// -------------------------------- Imports ---------------------------------
+
+// @formatter:off
 import 'package:http/http.dart' as http;
-import '../converter.dart' as converter;
+import '../converter.dart'      as converter;
+import 'debug.dart';
+import 'variables.dart'         as variables;
+import '../objects.dart'        as objects;
+import 'dart:convert'           as convert;
 import '../exceptions.dart';
-import 'variables.dart' as variables;
-import '../objects.dart' as objects;
-import 'dart:convert' as convert;
+// @formatter:on
+
+// ------------------------------ GET-Requests ------------------------------
 
 /// "4.7.15 Zyklus abfragen
 /// Endpunkt, um alle Termin Wiederholzyklen zu bekommen. [...]"
@@ -19,65 +26,10 @@ Future<List<objects.Zyklus>> requestZyklen() async { // @formatter:off
   return zyklen;
 } // @formatter:on
 
+/// Enthält alle Admin-Requests die sich mit Usermanagement befassen.
 abstract class User {
-  //TODO for GUI PGM'er pfuefung ob mindestens ein optionaler Parameter dabei sind
-  // @formatter:off
-  static void bearbeiteUser(int userID,
-      [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
-        int berechtigung, int elternID, String elternmail]) async {
 
-    var parameter = <String, String>{};
-                              parameter['token']        = variables.token;
-                              parameter['userid']       = '$userID';
-    if (vorname      != null) parameter['vorname']      = vorname;
-    if (nachname     != null) parameter['nachname']     = nachname;
-    if (email        != null) parameter['email']        = email;
-    if (plz          != null) parameter['plz']          = plz;
-    if (ort          != null) parameter['ort']          = ort;
-    if (jugendgruppe != null) parameter['jugendgruppe'] = jugendgruppe;
-    if (berechtigung != null) parameter['berechtigung'] = '$berechtigung';
-    if (elternID     != null) parameter['elternID']     = '$elternID';
-    if (elternmail   != null) parameter['elternmail']   = elternmail;
-
-    var _response = await http.patch('${variables.url}/admin/user/', body: parameter);
-
-    if (_response.statusCode != 204) {
-      throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
-                                                   c422: 'Es fehlt ein Parameter');
-    }
-  } // @formatter:on
-
-  static void loescheUser(int id) async { // @formatter:off
-    var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=$id');
-    if (_response.statusCode != 204) {
-      throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
-                                                   c422: 'Es fehlt ein Parameter');
-    }
-  } // @formatter:on
-
-//TODO funktioniert nicht
-//  static void erstelleUser(
-//      String vorname, String nachname, int berechtigung, String plz, String ort,
-//      [String jugendgruppe, int elternid, String elternemail, String email]) async {
-//    var _response = await http.post(
-//        '${variables.url}/admin/user?token=${variables.token}&vorname=$vorname&nachname=$nachname&berechtigung=$berechtigung&plz=$plz&ort=$ort' +
-//            (jugendgruppe != null ? '&jugendgruppe=$jugendgruppe' : '') +
-//            (elternid != null ? '&elternid=$elternid' : '') +
-//            (elternemail != null ? '&elternemail=$elternemail' : '') +
-//            (email != null ? '&email=$email' : ''));
-////  var body = {};
-////  body.
-////    var _response = await http.post(
-////        '${variables.url}/admin/user', body: {'token': variables.token, 'vorname': vorname, 'nachname': nachname, 'berechtigung': '$berechtigung', 'plz': plz, 'ort': ort/*,
-////            jugendgruppe != null ? 'jugendgruppe': jugendgruppe' : null,
-////            (elternid != null ? '&elternid=$elternid' : ''),
-////            (elternemail != null ? '&elternemail=$elternemail' : ''),
-////            (email != null ? '&email=$email' : '')*/});
-//    if(_response.statusCode != 200) {
-//      throw Exception(
-//          'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
-//    }
-//  }
+  // ------------------------------ GET-Requests ------------------------------
 
   /// "4.7.25 Admin User Daten
   /// Endpunkt, um die Daten über einen User zu bekommen. Es muss die Userid [...]
@@ -86,8 +38,11 @@ abstract class User {
   /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
   static Future<objects.User> requestUser(int userID) async { // @formatter:off
     var _response = await http.get('${variables.url}/admin/user?token=${variables.token}&userid=${userID}');
-    if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
-    return converter.jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
+    if (_response.statusCode != 200) {
+      throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
+                                                   c422: 'Es fehlt ein Parameter');
+    }
+      return converter.jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
   } // @formatter:on
 
   /// "4.7.24 Admin Userliste
@@ -103,32 +58,98 @@ abstract class User {
     }
     return userliste;
   } // @formatter:on
-}
 
-abstract class Termin {
+  // ------------------------------ POST-Requests -----------------------------
 
-  static void erstelleTermin(objects.AdminTermin termin) async { // @formatter:off
+  /// "4.7.26 Admin User erstellen
+  /// Endpunkt, um einen neuen User anzulegen. Es müssen folgende Parameter übergeben werden.
+  /// Vorname, Nachname, usertyp, plz, Ort, jugendgruppe (optional), elternid (optional), elternemail
+  /// (optional), email (optional).
+  /// Sind elternid und elternemail angegeben wird nur die elternid beachtet.
+  /// Die Elternid muss genutzt werden, wenn der Eltern Account schon aktiviert ist. Ist der Eltern Account
+  /// schon registriert aber noch nicht aktiviert muss die elternemail gesetzt werden."
+  ///
+  /// Dokumentation der API-Doku v2.6 v. Tobias Möller entnommen
+  static void erstelleUser( // @formatter:off
+      String vorname, String nachname, int usertyp, String plz, String ort,
+      [String jugendgruppe, int elternid, String elternemail, String email]) async {
 
     var _parameters = <String, String>{};
-                                       _parameters['token']        = variables.token;
-                                       _parameters['name']         = termin.name;
-                                       _parameters['beschreibung'] = termin.beschreibung;
-                                       _parameters['ort']          = termin.ort;
-                                       _parameters['start_datum']  = '${converter.dateTimeFormat(termin.timeVon)}';
-                                       _parameters['end_datum']    = '${converter.dateTimeFormat(termin.timeBis)}';
-                                       _parameters['zyklusid']     = '${termin.zyklus.zyklusID}';
-//                                     _parameters['zyklus_ende']  = '${termin.zyklus. }'; TODO
-                                       _parameters['plaetze']      = '${termin.plaetze}';
-    if (termin.freigeschaltet != null) _parameters['oeffentlich']  = '${termin.freigeschaltet}';
-    if (termin.anmeldungStart != null) _parameters['sichtbar_ab']  = '${converter.dateTimeFormat(termin.anmeldungStart)}';
-    if (termin.anmeldungEnde  != null) _parameters['sichtbar_bis'] = '${converter.dateTimeFormat(termin.anmeldungEnde)}';
+    _parameters['token']        = variables.token;
+    _parameters['vorname']      = vorname;
+    _parameters['nachname']     = nachname;
+    _parameters['usertyp']     = '$usertyp';
+    _parameters['plz']          = plz;
+    _parameters['ort']          = ort;
+    if(jugendgruppe != null) _parameters['jugendgruppe'] = jugendgruppe;
+    if(elternid     != null) _parameters['elternid']     = '$elternid';
+    if(elternemail  != null) _parameters['elternemail']  = elternemail;
+    if(email        != null) _parameters['email']        = email;
 
-    var _response = await http.post('${variables.url}/admin/termin', body: _parameters);
-    if (_response.statusCode != 201) {
-      throw exceptionHandler(_response.statusCode, c400: 'Termin konnte nicht erstellt werden.',
-                                                   c422: 'Es fehlen benötigte Parameter.');
+    var _response = await http.post('${variables.url}/admin/user', body: _parameters);
+
+    if(_response.statusCode != 201) {
+      throw exceptionHandler(_response.statusCode, c422: 'Es fehlt ein Parameter',
+          c409: 'Wenn kein Elternaccount angegeben ist muss eine E-Mail mitgeschickt werden.',
+          c404: 'Der Eltern Account existiert nicht.');
     }
   } // @formatter:on
+
+  // ----------------------------- PATCH-Requests -----------------------------
+
+  // TODO for GUI PGM'er pfuefung ob mindestens ein optionaler Parameter dabei sind
+  // TODO fehlerhaft Code 500
+  // @formatter:off
+  /// "4.7.27 Admin User bearbeiten
+  /// Endpunkt, um einen User zu bearbeiten. Es muss [...] die Userid übergeben werden.
+  /// Optional können folgende Parameter übergeben werden. Vorname, Nachname, Email, plz, Ort,
+  /// Jugendgruppe, usertyp, elternid, elternemail"
+  ///
+  /// Dokumentation der API-Doku v2.6 v. Tobias Möller entnommen
+  static void bearbeiteUser(int userID,
+      [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
+        int usertyp, int elternID, String elternmail]) async {
+
+    var parameter = <String, String>{};
+                              parameter['token']        = variables.token;
+                              parameter['userid']       = '$userID';
+    if (vorname      != null) parameter['vorname']      = vorname;
+    if (nachname     != null) parameter['nachname']     = nachname;
+    if (email        != null) parameter['email']        = email;
+    if (plz          != null) parameter['plz']          = plz;
+    if (ort          != null) parameter['ort']          = ort;
+    if (jugendgruppe != null) parameter['jugendgruppe'] = jugendgruppe;
+    if (usertyp      != null) parameter['usertyp']      = '$usertyp';
+    if (elternID     != null) parameter['elternID']     = '$elternID';
+    if (elternmail   != null) parameter['elternmail']   = elternmail;
+
+    var _response = await http.patch('${variables.url}/admin/user/', body: parameter);
+
+    if (_response.statusCode != 204) {
+      throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
+                                                   c422: 'Es fehlt ein Parameter');
+    }
+  } // @formatter:on
+
+  // ----------------------------- DELETE-Requests ----------------------------
+
+  /// "4.7.28 Admin User löschen
+  /// Endpunkt, um einen User zu löschen. Es muss die Userid [...] übergeben werden"
+  ///
+  /// Dokumentation der API-Doku v2.6 v. Tobias Möller entnommen
+  static void loescheUser(int id) async { // @formatter:off
+    var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=$id');
+    if (_response.statusCode != 204) {
+      throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
+                                                   c422: 'Es fehlt ein Parameter');
+    }
+  } // @formatter:on
+}
+
+/// Enthält alle Admin-Requests die sich mit Terminmanagement befassen.
+abstract class Termin {
+
+  // ------------------------------ GET-Requests ------------------------------
 
   /// "4.7.17 Admin Termin anzeigen
   /// Endpunkt, um den Termin, alle Anmeldungen, und alle Abmeldungen anzuzeigen. Als Parameter
@@ -159,61 +180,77 @@ abstract class Termin {
     return terminliste;
   } // @formatter:on
 
-  /// "4.7.20 Admin Termin löschen
-  /// Endpunkt, um einen Termin zu löschen. Es \[wird\] die Terminid [...] übergeben."
+  // ------------------------------ POST-Requests -----------------------------
+
+  /// "4.7.18 Admin Termin anlegen
+  /// Endpunkt, um einen neuen Termin anzulegen. Es werden folgende Parameter übergeben. [...]
+  /// Name, Beschreibung, Ort, Start Datum, End Datum, Zyklusid, Zyklus End-Datum, Plätze, Öffentlich
+  /// (nicht erforderlich), sichtbar ab (nicht erforderlich), Anmeldung bis (nicht erforderlich)"
   ///
-  /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
-  static void terminLoeschen(int id) async { // @formatter:off
-    var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
-    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode);
+  /// Dokumentation der API-Doku v2.6 v. Tobias Möller entnommen
+  static void erstelleTermin(objects.AdminTermin termin) async { // @formatter:off
+    var _parameters = <String, String>{};
+                                       _parameters['token']        = variables.token;
+                                       _parameters['name']         = termin.name;
+                                       _parameters['beschreibung'] = termin.beschreibung;
+                                       _parameters['ort']          = termin.ort;
+                                       _parameters['start_datum']  = '${converter.dateTimeFormat(termin.timeVon)}';
+                                       _parameters['end_datum']    = '${converter.dateTimeFormat(termin.timeBis)}';
+                                       _parameters['zyklusid']     = '${termin.zyklus.zyklusID}';
+                                       _parameters['zyklus_ende']  = '${converter.dateFormat(termin.zyklusEnde)}';
+                                       _parameters['plaetze']      = '${termin.plaetze}';
+    if (termin.freigeschaltet != null) _parameters['oeffentlich']  = '${termin.freigeschaltet}';
+    if (termin.anmeldungStart != null) _parameters['sichtbar_ab']  = '${converter.dateTimeFormat(termin.anmeldungStart)}';
+    if (termin.anmeldungEnde  != null) _parameters['sichtbar_bis'] = '${converter.dateTimeFormat(termin.anmeldungEnde)}';
+
+    var _response = await http.post('${variables.url}/admin/termin', body: _parameters);
+    if (_response.statusCode != 201) {
+      throw exceptionHandler(_response.statusCode, c400: 'Termin konnte nicht erstellt werden.',
+                                                   c422: 'Es fehlen benötigte Parameter.');
+    }
   } // @formatter:on
 
   //@formatter:off
   static void addUserZuTermin(int eventID, [String kommentar, bool bestaetigt]) async {
     var parameters = <String, String>{};
-                            parameters['token']      = variables.token;
-                            parameters['eventid']    = '$eventID';
+    parameters['token']      = variables.token;
+    parameters['eventid']    = '$eventID';
     if (kommentar  != null) parameters['kommentar']  = kommentar;
     if (bestaetigt != null) parameters['bestaetigt'] = '$bestaetigt';
 
     var _response = await http.post('${variables.url}/admin/user}', body:parameters);
     if (_response.statusCode != 201) {
       throw exceptionHandler(_response.statusCode, c404: 'Userid existiert nicht / Termin nicht gefunden',
-                                                   c400: 'User hat dem Termin bereits geantwortet');
+          c400: 'User hat dem Termin bereits geantwortet');
     }
   }//@foramtter:on
 
-  //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
-  static void absageUserTermin(int eventID, int userID, [String kommentar]) async { // @formatter:off
-    var parameters = <String, String>{};
-                           parameters['token']     = variables.token;
-                           parameters['eventid']   = '$eventID';
-                           parameters['userid']    = '$userID';
-    if (kommentar != null) parameters['kommentar'] = kommentar;
+  // ----------------------------- PATCH-Requests -----------------------------
 
-    var _response = await http.patch('${variables.url}/admin/termin/absagen', body: parameters);
-    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
-  } // @formatter:on
-
-  static void zusageUsertermin(int eventID,int userID, [String kommentar]) async { // @formatter:off
+  static void zusageUserTermin(int eventID,int userID, [String kommentar]) async { // @formatter:off
     var parameters = <String, String>{};
-                           parameters['token']     = variables.token;
-                           parameters['eventid']   = '$eventID';
-                           parameters['userid']    = '$userID';
+    parameters['token']     = variables.token;
+    parameters['eventid']   = '$eventID';
+    parameters['userid']    = '$userID';
     if (kommentar != null) parameters['kommentar'] = kommentar;
 
     var _response = await http.patch('${variables.url}/admin/termin/zusagen', body: parameters);
     if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
   } // @formatter:on
 
+  // TODO
+  static void absageUserTermin() {
+
+  }
+
   // @formatter:off
   //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
   static void bearbeiteTermin(int eventID,
       [String name, String beschreibung, String ort, DateTime startDatum, DateTime endDatum,
-      int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async {
+        int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async {
     var parameters = <String, String>{};
-                              parameters['token']        = variables.token;
-                              parameters['eventid']      = '$eventID';
+    parameters['token']        = variables.token;
+    parameters['eventid']      = '$eventID';
     if (name         != null) parameters['name']         = name;
     if (beschreibung != null) parameters['beschreibung'] = beschreibung;
     if (ort          != null) parameters['ort']          = ort;
@@ -226,5 +263,28 @@ abstract class Termin {
 
     var _response = await http.patch('${variables.url}/admin/termin', body: parameters);
     if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode);
+  } // @formatter:on
+
+  // ----------------------------- DELETE-Requests ----------------------------
+
+  /// "4.7.20 Admin Termin löschen
+  /// Endpunkt, um einen Termin zu löschen. Es \[wird\] die Terminid [...] übergeben."
+  ///
+  /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
+  static void terminLoeschen(int id) async { // @formatter:off
+    var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
+    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode);
+  } // @formatter:on
+
+  //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
+  static void absageUserTermin(int eventID, int userID, [String kommentar]) async { // @formatter:off
+    var parameters = <String, String>{};
+                           parameters['token']     = variables.token;
+                           parameters['eventid']   = '$eventID';
+                           parameters['userid']    = '$userID';
+    if (kommentar != null) parameters['kommentar'] = kommentar;
+
+    var _response = await http.patch('${variables.url}/admin/termin/absagen', body: parameters);
+    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
   } // @formatter:on
 }
