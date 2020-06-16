@@ -92,7 +92,7 @@ class User {
         }
       }
       if (count > 1) {
-        throw ('Ungültige Email Adresse. Mehr als ein \"@\"');
+        throw 'Ungültige Email Adresse. Mehr als ein \"@\"';
       } else {
         _email = value;
       }
