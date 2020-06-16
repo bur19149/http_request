@@ -3,6 +3,7 @@ import 'dart:io';
 import '../objects.dart' as objects;
 
 // @formatter:off
+final File orgAppConfig = File('OrgAppConfig.txt');
 final String url        = 'https://jugendevent.mainlevel.at/api';                             // Verbindungs-URL
 final String appVersion = 'alpha 0.1';                                                        // aktuelle Version der App
       String token      = 'rVMWQRDvHY0NpO-c_8S!nMRhmi=pXZ4gLQ3szHY7wYVVEV-z=RwhvezRxu8lkcB!'; // Token zur Identifizierung beim Server
@@ -33,14 +34,6 @@ var permissions = const <objects.Permission>[objects.Permission(null, null, 'Erl
                                              objects.Permission(null, null, 'Erlaubt das Abschliessen, festlegen von Ergebnissen etc.',                           'bewerb.schliessen'           ),
                                              objects.Permission(null, null, 'Darf eine Liste aller Bewerbe einsehen',                                             'bewerb.alle_zeigen'          )];
 // @formatter:on
-
-// Wird vermutlich nicht benötigt
-//abstract class Verwaltung {
-//      var orgAppConfig = File('OrgAppConfig.txt');
-//      List<UserTermin> eigeneTermine;
-//      List<AdminTermin> adminTermine;
-//      List<Zyklus> listeZyklusse;
-//}
 
 abstract class FileHandler {
   static Future<String> get _localPath async {
