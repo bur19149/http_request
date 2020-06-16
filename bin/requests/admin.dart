@@ -46,17 +46,13 @@ abstract class User {
       throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
                                                    c422: 'Es fehlt ein Parameter');
     }
-
   } // @formatter:on
 
   static void loescheUser(int id) async { // @formatter:off
     var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=$id');
     if (_response.statusCode != 204) {
-      if (_response.statusCode == 404) {
-        throw Exception('Der User Existiert nicht.');
-      } else {
-        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-      }
+      throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
+                                                   c422: 'Es fehlt ein Parameter');
     }
   } // @formatter:on
 
