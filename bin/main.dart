@@ -7,6 +7,19 @@ import 'requests/debug.dart' as debug;
 import 'requests/login.dart' as login;
 import 'requests/user.dart' as user;
 
+// TODO Checkliste für fertige Files, sprich Files in denen alles dokumentiert und getestet wurde
+// * requests/debug.dart
+// * exceptions.dart
+// * converter.dart
+
+// TODO unfertige Files
+// * pruefungen.dart
+// * objects.dart
+// * requests/admin.dart
+// * requests/login.dart
+// * requests/user.dart
+// * requests/variables.dart
+
 main(List<String> arguments) async {
 //  print(await login.requestUser());
 //  debug.printListe(await admin.User.requestUserListe());
