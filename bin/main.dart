@@ -18,7 +18,6 @@ import 'requests/user.dart' as user;
 // * objects.dart
 // * requests/admin.dart
 //      - bearbeiteUser wirft Code 500 (auch in Postman)
-//      - absageUserTermin fehlt
 //      - bearbeiteUser und erstelleUser Parameterübergaben ev. auf User-Objekte ändern
 // * requests/login.dart
 // * requests/variables.dart

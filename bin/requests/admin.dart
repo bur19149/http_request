@@ -238,10 +238,17 @@ abstract class Termin {
     if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
   } // @formatter:on
 
-  // TODO
-  static void absageUserTermin() {
+  //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
+  static void absageUserTermin(int eventID, int userID, [String kommentar]) async { // @formatter:off
+    var parameters = <String, String>{};
+    parameters['token']     = variables.token;
+    parameters['eventid']   = '$eventID';
+    parameters['userid']    = '$userID';
+    if (kommentar != null) parameters['kommentar'] = kommentar;
 
-  }
+    var _response = await http.patch('${variables.url}/admin/termin/absagen', body: parameters);
+    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
+  } // @formatter:on
 
   // @formatter:off
   //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
@@ -274,17 +281,5 @@ abstract class Termin {
   static void terminLoeschen(int id) async { // @formatter:off
     var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
     if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode);
-  } // @formatter:on
-
-  //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
-  static void absageUserTermin(int eventID, int userID, [String kommentar]) async { // @formatter:off
-    var parameters = <String, String>{};
-                           parameters['token']     = variables.token;
-                           parameters['eventid']   = '$eventID';
-                           parameters['userid']    = '$userID';
-    if (kommentar != null) parameters['kommentar'] = kommentar;
-
-    var _response = await http.patch('${variables.url}/admin/termin/absagen', body: parameters);
-    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
   } // @formatter:on
 }
