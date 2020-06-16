@@ -40,6 +40,7 @@ abstract class User {
     if (elternmail   != null) parameter['elternmail']   = elternmail;
 
     var _response = await http.patch('${variables.url}/admin/user/', body: parameter);
+
     if (_response.statusCode != 204) {
       throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
                                                    c422: 'Es fehlt ein Parameter');

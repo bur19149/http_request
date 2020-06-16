@@ -3,8 +3,13 @@ import 'package:intl/intl.dart' as intl;
 
 import 'objects.dart' as objects;
 
-dateTimeFormat(DateTime dateTime) => intl.DateFormat('dd.MM.yyyy HH:mm').format(dateTime);
+// --------------------------- DateTime zu String ---------------------------
+
+/// Konvertiert ein DateTime in einen String nach dem Schema dd.MM.yyyy
 dateFormat(DateTime date) => intl.DateFormat('dd.MM.yyyy').format(date);
+
+/// Konvertiert ein DateTime in einen String nach dem Schema dd.MM.yyyy HH:mm
+dateTimeFormat(DateTime dateTime) => intl.DateFormat('dd.MM.yyyy HH:mm').format(dateTime);
 
 // ------------------------------ JSON zu User ------------------------------
 
