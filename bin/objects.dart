@@ -66,7 +66,7 @@ class User {
   }
 
   set ort(String value) {
-    _ort = pruefungen.prufeOrt(pruefungen.stringPrufung(value));
+    _ort = pruefungen.pruefeOrt(pruefungen.stringPrufung(value));
   }
 
   set typ(UserTyp value) {

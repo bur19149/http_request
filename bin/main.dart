@@ -11,9 +11,9 @@ import 'requests/user.dart' as user;
 // * requests/debug.dart
 // * exceptions.dart
 // * converter.dart
+// * pruefungen.dart
 
 // TODO unfertige Files
-// * pruefungen.dart
 // * objects.dart
 // * requests/admin.dart
 // * requests/login.dart

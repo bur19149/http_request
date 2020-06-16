@@ -35,7 +35,8 @@ int prufeID(int value) {
   }
 }
 
-String prufeOrt(String value) {
+/// Prüft ob der Ortsname ein gültiger String ist
+String pruefeOrt(String value) {
   RegExp a = RegExp(r'^[ a-zA-ZöÖäÄüÜ]+$');
   if (a.hasMatch(value)) {
     return value;
