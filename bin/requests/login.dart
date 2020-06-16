@@ -1,3 +1,4 @@
+import '../exceptions.dart';
 import '../pruefungen.dart' as pruefungen;
 import 'package:http/http.dart' as http;
 import '../converter.dart' as converter;
@@ -55,7 +56,7 @@ void login(String value) async {
   } else {
     var url = '${variables.url}link';
     //TODO für model das Handy modell holen und ka was wir mit Name machen.
-    var response = await http.post(url, body: {
+    var _response = await http.post(url, body: {
       'userkey': '$value',
       'name': 'POST',
       'model': '???',
@@ -67,11 +68,11 @@ void login(String value) async {
     // Userkey invalid: 400 Der Schlüssel ist abgelaufen oder wurde bereits erfolgreich benutzt.
     // Parameter missing: 422 Es fehlen ein oder mehr Parameter
 
-    if (response.statusCode == 200) {
+    if (_response.statusCode == 200) {
       await variables.FileHandler.writeFile(
-          RegExp('.*"(.*)"}}').allMatches(response.body).toList()[0].group(1));
+          RegExp('.*"(.*)"}}').allMatches(_response.body).toList()[0].group(1));
     } else {
-      throw ('Error: Response status: ${response.statusCode}');
+      throw exceptionHandler(_response.statusCode);
     }
   }
 }
@@ -81,10 +82,7 @@ void login(String value) async {
 Future<objects.User> requestUser() async {
   var _response =
       await http.get('${variables.url}/user?token=${variables.token}');
-  if (_response.statusCode != 200) {
-    throw Exception(
-        'Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
-  }
+  if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
   return converter
       .jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
 }

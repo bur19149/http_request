@@ -11,9 +11,7 @@ import 'dart:convert' as convert;
 /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
 Future<List<objects.Zyklus>> requestZyklen() async { // @formatter:off
   var _response = await http.get('${variables.url}/zyklus?token=${variables.token}');
-  if (_response.statusCode != 200) {
-    throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
-  }
+  if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
   var zyklen = <objects.Zyklus>[];
   for (var zyklus in convert.jsonDecode(_response.body)['zyklus_list']) {
     zyklen.add(converter.jsonToZyklus(zyklus));
@@ -87,9 +85,7 @@ abstract class User {
   /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
   static Future<objects.User> requestUser(int userID) async { // @formatter:off
     var _response = await http.get('${variables.url}/admin/user?token=${variables.token}&userid=${userID}');
-    if (_response.statusCode != 200) {
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
-    }
+    if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
     return converter.jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
   } // @formatter:on
 
@@ -99,9 +95,7 @@ abstract class User {
   /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
   static Future<List<objects.User>> requestUserListe() async { // @formatter:off
     var _response = await http.get('${variables.url}/admin/user?token=${variables.token}');
-    if (_response.statusCode != 200) {
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
-    }
+    if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
     var userliste = <objects.User>[];
     for (var user in convert.jsonDecode(_response.body)['data']['users']) {
       userliste.add(converter.jsonToUser(user));
@@ -130,12 +124,8 @@ abstract class Termin {
 
     var _response = await http.post('${variables.url}/admin/termin', body: _parameters);
     if (_response.statusCode != 201) {
-      if (_response.statusCode == 400) {
-        throw Exception('Termin konnte nicht angelegt werden.');
-      } else if (_response.statusCode == 422) {
-        throw Exception('Ein Parameter fehlt.');
-      }
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
+      throw exceptionHandler(_response.statusCode, c400: 'Termin konnte nicht erstellt werden.',
+                                                   c422: 'Es fehlen benötigte Parameter.');
     }
   } // @formatter:on
 
@@ -146,9 +136,7 @@ abstract class Termin {
   /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
   static Future<objects.AdminTermin> requestTermin(int eventID) async { // @formatter:off
     var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&eventid=$eventID');
-    if (_response.statusCode != 200) {
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}');
-    }
+    if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
     return converter.jsonToTermin(convert.jsonDecode(_response.body)['termin']);
   } // @formatter:on
 
@@ -162,9 +150,7 @@ abstract class Termin {
   static Future<List<objects.UserTermin>> requestTerminListe( // @formatter:off
       bool archive) async {
     var _response = await http.get('${variables.url}/admin/termin?token=${variables.token}&archive=$archive');
-    if (_response.statusCode != 200) {
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-    }
+    if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
     var terminliste = <objects.UserTermin>[];
     for (var termin in convert.jsonDecode(_response.body)['termine']) {
       terminliste.add(converter.jsonToTermin(termin));
@@ -178,9 +164,7 @@ abstract class Termin {
   /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
   static void terminLoeschen(int id) async { // @formatter:off
     var _response = await http.delete('${variables.url}/admin/termin?token=${variables.token}&eventid=$id');
-    if (_response.statusCode != 204) {
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-    }
+    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode);
   } // @formatter:on
 
   //@formatter:off
@@ -192,14 +176,9 @@ abstract class Termin {
     if (bestaetigt != null) parameters['bestaetigt'] = '$bestaetigt';
 
     var _response = await http.post('${variables.url}/admin/user}', body:parameters);
-    if (_response.statusCode != 201){
-      if (_response.statusCode == 404){
-        throw Exception('User oder Event ist unbekannt.');
-      } else if (_response.statusCode == 400){
-        throw Exception('Der User ist schon im Termin eingetragen.');
-      } else {
-        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-      }
+    if (_response.statusCode != 201) {
+      throw exceptionHandler(_response.statusCode, c404: 'Userid existiert nicht / Termin nicht gefunden',
+                                                   c400: 'User hat dem Termin bereits geantwortet');
     }
   }//@foramtter:on
 
@@ -212,12 +191,7 @@ abstract class Termin {
     if (kommentar != null) parameters['kommentar'] = kommentar;
 
     var _response = await http.patch('${variables.url}/admin/termin/absagen', body: parameters);
-    if (_response.statusCode != 204) {
-      if (_response.statusCode == 404) {
-        throw Exception('Termin oder User existiert nicht!');
-      }
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-    }
+    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
   } // @formatter:on
 
   static void zusageUsertermin(int eventID,int userID, [String kommentar]) async { // @formatter:off
@@ -228,14 +202,8 @@ abstract class Termin {
     if (kommentar != null) parameters['kommentar'] = kommentar;
 
     var _response = await http.patch('${variables.url}/admin/termin/zusagen', body: parameters);
-    if (_response.statusCode != 204) {
-      if (_response.statusCode == 404) {
-        throw Exception('UserID oder Termin ist unbekannt.');
-      } else {
-        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-      }
-    }// @foramtter:on
-  }
+    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode, c404: 'Termin existiert nicht / Userid unbekannt');
+  } // @formatter:on
 
   // @formatter:off
   //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
@@ -256,8 +224,6 @@ abstract class Termin {
     if (anmeldungBis != null) parameters['anmeldungbis'] = '${converter.dateTimeFormat(anmeldungBis)}';
 
     var _response = await http.patch('${variables.url}/admin/termin', body: parameters);
-    if (_response.statusCode != 204) {
-      throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-    }
+    if (_response.statusCode != 204) throw exceptionHandler(_response.statusCode);
   } // @formatter:on
 }
