@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import '../converter.dart' as converter;
+import '../exceptions.dart';
 import 'variables.dart' as variables;
 import '../objects.dart' as objects;
 import 'dart:convert' as convert;
@@ -25,33 +26,31 @@ abstract class User {
   // @formatter:off
   static void bearbeiteUser(int userID,
       [String vorname, String nachname, String email, String plz, String ort, String jugendgruppe,
-        int berechtigung, int elternID, String elternmail]) async{
+        int berechtigung, int elternID, String elternmail]) async {
 
     var parameter = <String, String>{};
-                             parameter['token']        = '${variables.token}';
-                             parameter['userid']       = '$userID';
-    if(vorname      != null) parameter['vorname']      = '$vorname';
-    if(nachname     != null) parameter['nachname']     = '$nachname';
-    if(email        != null) parameter['email']        = '$email';
-    if(plz          != null) parameter['plz']          = '$plz';
-    if(ort          != null) parameter['ort']          = '$ort';
-    if(jugendgruppe != null) parameter['jugendgruppe'] = '$jugendgruppe';
-    if(berechtigung != null) parameter['berechtigung'] = '$berechtigung';
-    if(elternID     != null) parameter['elternID']     = '$elternID';
-    if(elternmail   != null) parameter['elternmail']   = '$elternmail';
+                              parameter['token']        = variables.token;
+                              parameter['userid']       = '$userID';
+    if (vorname      != null) parameter['vorname']      = vorname;
+    if (nachname     != null) parameter['nachname']     = nachname;
+    if (email        != null) parameter['email']        = email;
+    if (plz          != null) parameter['plz']          = plz;
+    if (ort          != null) parameter['ort']          = ort;
+    if (jugendgruppe != null) parameter['jugendgruppe'] = jugendgruppe;
+    if (berechtigung != null) parameter['berechtigung'] = '$berechtigung';
+    if (elternID     != null) parameter['elternID']     = '$elternID';
+    if (elternmail   != null) parameter['elternmail']   = elternmail;
 
     var _response = await http.patch('${variables.url}/admin/user/', body: parameter);
-    if(_response.statusCode!=204){
-      if(_response.statusCode==404){
-        throw Exception('Der User Existiert nicht.');
-      }else{
-        throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
-      }
+    if (_response.statusCode != 204) {
+      throw exceptionHandler(_response.statusCode, c404: 'Der Angefragte User existiert nicht',
+                                                   c422: 'Es fehlt ein Parameter');
     }
-  }// @formatter:on
+
+  } // @formatter:on
 
   static void loescheUser(int id) async { // @formatter:off
-    var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=${id}');
+    var _response = await http.delete('${variables.url}/admin/user?token=${variables.token}&userid=$id');
     if (_response.statusCode != 204) {
       if (_response.statusCode == 404) {
         throw Exception('Der User Existiert nicht.');
@@ -118,19 +117,20 @@ abstract class User {
 abstract class Termin {
 
   static void erstelleTermin(objects.AdminTermin termin) async { // @formatter:off
+
     var _parameters = <String, String>{};
-                                      _parameters['token']        = variables.token;
-                                      _parameters['name']         = termin.name;
-                                      _parameters['beschreibung'] = termin.beschreibung;
-                                      _parameters['ort']          = termin.ort;
-                                      _parameters['start_datum']  = '${termin.timeVon}';
-                                      _parameters['end_datum']    = '${termin.timeBis}';
-                                      _parameters['zyklusid']     = '${termin.zyklus.zyklusID}';
-//                                    _parameters['zyklus_ende']  = '${termin.zyklus. }'; TODO
-                                      _parameters['plaetze']      = '${termin.plaetze}';
-    if(termin.freigeschaltet != null) _parameters['oeffentlich']  = '${termin.freigeschaltet}';
-    if(termin.anmeldungStart != null) _parameters['sichtbar_ab']  = '${termin.anmeldungStart}';
-    if(termin.anmeldungEnde  != null) _parameters['sichtbar_bis'] = '${termin.anmeldungEnde}';
+                                       _parameters['token']        = variables.token;
+                                       _parameters['name']         = termin.name;
+                                       _parameters['beschreibung'] = termin.beschreibung;
+                                       _parameters['ort']          = termin.ort;
+                                       _parameters['start_datum']  = '${converter.dateTimeFormat(termin.timeVon)}';
+                                       _parameters['end_datum']    = '${converter.dateTimeFormat(termin.timeBis)}';
+                                       _parameters['zyklusid']     = '${termin.zyklus.zyklusID}';
+//                                     _parameters['zyklus_ende']  = '${termin.zyklus. }'; TODO
+                                       _parameters['plaetze']      = '${termin.plaetze}';
+    if (termin.freigeschaltet != null) _parameters['oeffentlich']  = '${termin.freigeschaltet}';
+    if (termin.anmeldungStart != null) _parameters['sichtbar_ab']  = '${converter.dateTimeFormat(termin.anmeldungStart)}';
+    if (termin.anmeldungEnde  != null) _parameters['sichtbar_bis'] = '${converter.dateTimeFormat(termin.anmeldungEnde)}';
 
     var _response = await http.post('${variables.url}/admin/termin', body: _parameters);
     if (_response.statusCode != 201) {
@@ -188,48 +188,48 @@ abstract class Termin {
   } // @formatter:on
 
   //@formatter:off
-  static void addUserZuTermin(int eventID, [String kommentar, bool bestaetigt]) async{
+  static void addUserZuTermin(int eventID, [String kommentar, bool bestaetigt]) async {
     var parameters = <String, String>{};
-                           parameters['token']      = '${variables.token}';
-                           parameters['eventid']    = '$eventID';
-    if(kommentar  != null) parameters['kommentar']  = '$kommentar';
-    if(bestaetigt != null) parameters['bestaetigt'] = '$bestaetigt';
+                            parameters['token']      = variables.token;
+                            parameters['eventid']    = '$eventID';
+    if (kommentar  != null) parameters['kommentar']  = kommentar;
+    if (bestaetigt != null) parameters['bestaetigt'] = '$bestaetigt';
 
     var _response = await http.post('${variables.url}/admin/user}', body:parameters);
-    if(_response.statusCode!=201){
-      if(_response.statusCode==404){
+    if (_response.statusCode != 201){
+      if (_response.statusCode == 404){
         throw Exception('User oder Event ist unbekannt.');
-      }else if(_response.statusCode == 400){
+      } else if (_response.statusCode == 400){
         throw Exception('Der User ist schon im Termin eingetragen.');
-      }else{
+      } else {
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
     }
   }//@foramtter:on
 
   //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
-  static void absageUserTermin(int eventID, int userID, [String kommentar]) async{ // @formatter:off
+  static void absageUserTermin(int eventID, int userID, [String kommentar]) async { // @formatter:off
     var parameters = <String, String>{};
-                          parameters['token']     = '${variables.token}';
-                          parameters['eventid']   = '$eventID';
-                          parameters['userid']    = '$userID';
-    if(kommentar != null) parameters['kommentar'] = '$kommentar';
+                           parameters['token']     = variables.token;
+                           parameters['eventid']   = '$eventID';
+                           parameters['userid']    = '$userID';
+    if (kommentar != null) parameters['kommentar'] = kommentar;
 
     var _response = await http.patch('${variables.url}/admin/termin/absagen', body: parameters);
     if (_response.statusCode != 204) {
-      if(_response.statusCode == 404) {
+      if (_response.statusCode == 404) {
         throw Exception('Termin oder User existiert nicht!');
       }
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
   } // @formatter:on
 
-  static void zusageUsertermin(int eventID,int userID, [String kommentar]) async{ // @formatter:off
+  static void zusageUsertermin(int eventID,int userID, [String kommentar]) async { // @formatter:off
     var parameters = <String, String>{};
-                          parameters['token']     = '${variables.token}';
-                          parameters['eventid']   = '$eventID';
-                          parameters['userid']    = '$userID';
-    if(kommentar != null) parameters['kommentar'] = '$kommentar';
+                           parameters['token']     = variables.token;
+                           parameters['eventid']   = '$eventID';
+                           parameters['userid']    = '$userID';
+    if (kommentar != null) parameters['kommentar'] = kommentar;
 
     var _response = await http.patch('${variables.url}/admin/termin/zusagen', body: parameters);
     if (_response.statusCode != 204) {
@@ -238,30 +238,30 @@ abstract class Termin {
       } else {
         throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
       }
-    }//@foramtter:on
+    }// @foramtter:on
   }
 
-  //@formatter:off
+  // @formatter:off
   //TODO ungetestet und DATETIME in dart ist anders als DATETIME in MYSQL siehe DOKU sollte umgewandelt werden.
   static void bearbeiteTermin(int eventID,
       [String name, String beschreibung, String ort, DateTime startDatum, DateTime endDatum,
-      int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async{
+      int plaetze, bool oeffentlich, DateTime sichtbarAb, DateTime anmeldungBis]) async {
     var parameters = <String, String>{};
-                             parameters['token']        = '${variables.token}';
-                             parameters['eventid']      = '$eventID';
-    if(name         != null) parameters['name']         = '$name';
-    if(beschreibung != null) parameters['beschreibung'] = '$beschreibung';
-    if(ort          != null) parameters['ort']          = '$ort';
-    if(startDatum   != null) parameters['startdatum']   = '$startDatum';
-    if(endDatum     != null) parameters['enddatum']     = '$endDatum';
-    if(plaetze      != null) parameters['plaetze']      = '$plaetze';
-    if(oeffentlich  != null) parameters['oeffentlich']  = '$oeffentlich';
-    if(sichtbarAb   != null) parameters['sichtbarab']   = '$sichtbarAb';
-    if(anmeldungBis != null) parameters['anmeldungbis'] = '$anmeldungBis';
+                              parameters['token']        = variables.token;
+                              parameters['eventid']      = '$eventID';
+    if (name         != null) parameters['name']         = name;
+    if (beschreibung != null) parameters['beschreibung'] = beschreibung;
+    if (ort          != null) parameters['ort']          = ort;
+    if (startDatum   != null) parameters['startdatum']   = '${converter.dateTimeFormat(startDatum)}';
+    if (endDatum     != null) parameters['enddatum']     = '${converter.dateTimeFormat(endDatum)}';
+    if (plaetze      != null) parameters['plaetze']      = '$plaetze';
+    if (oeffentlich  != null) parameters['oeffentlich']  = '$oeffentlich';
+    if (sichtbarAb   != null) parameters['sichtbarab']   = '${converter.dateTimeFormat(sichtbarAb)}';
+    if (anmeldungBis != null) parameters['anmeldungbis'] = '${converter.dateTimeFormat(anmeldungBis)}';
 
     var _response = await http.patch('${variables.url}/admin/termin', body: parameters);
-    if(_response.statusCode != 204){
+    if (_response.statusCode != 204) {
       throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
     }
-  }//@formatter:on
+  } // @formatter:on
 }

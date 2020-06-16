@@ -7,9 +7,9 @@ import '../converter.dart' as converter;
 import 'dart:convert' as convert;
 
 //@formatter:off
-  anmeldungTermin(int eventID, [int userID]) async{
+  anmeldungTermin(int eventID, [int userID]) async {
     var parameters = <String, String>{};
-                       parameters['token']   = '${variables.token}';
+                       parameters['token']   = variables.token;
                        parameters['eventid'] = '$eventID';
     if(userID != null) parameters['userid']  = '$userID';
 
@@ -28,9 +28,9 @@ import 'dart:convert' as convert;
   }
 
 //TODO API Dokumentation ist noch nicht fertig -> Wegen den Exceptions.
-  void abmeldungTermin(int eventID, [int userID]) async{ // @formatter:off
+  void abmeldungTermin(int eventID, [int userID]) async { // @formatter:off
   var parameters = <String, String>{};
-                     parameters['token']   = '${variables.token}';
+                     parameters['token']   = variables.token;
                      parameters['eventid'] = '$eventID';
   if(userID != null) parameters['userid']  = '$userID';
 
@@ -50,7 +50,7 @@ import 'dart:convert' as convert;
 /// Leiter Antwort ist dabei egal. [...]"
 ///
 /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
-Future<List<objects.UserTermin>> requestMeineTermine() async { //@formatter:off
+Future<List<objects.UserTermin>> requestMeineTermine() async { // @formatter:off
   var _response = await http.get('${variables.url}/meine-termine?token=${variables.token}');
   if (_response.statusCode != 200) {
     throw Exception('Unvorhergesehene HTTP Rückmeldung: ${_response.statusCode}.');
@@ -60,7 +60,7 @@ Future<List<objects.UserTermin>> requestMeineTermine() async { //@formatter:off
     terminliste.add(converter.jsonToTermin(termin));
   }
   return terminliste;
-}//@formatter:on
+} // @formatter:on
 
 // TODO Exception-Handling hier ev. noch einmal überarbeiten
 Future<objects.UserTermin> requestTermin(int eventID) async {
@@ -79,7 +79,7 @@ Future<objects.UserTermin> requestTermin(int eventID) async {
 /// angezeigt, bei denen die Anmeldung bereits beendet ist. [...]"
 ///
 /// Dokumentation der API-Doku v2.5 v. Tobias Möller entnommen
-Future<List<objects.UserTermin>> requestAlleTermine() async { //@foramtter:off
+Future<List<objects.UserTermin>> requestAlleTermine() async { // @foramtter:off
   var _response = await http.get('${variables.url}/termin?token=${variables.token}');
   if (_response.statusCode != 200) {
     throw Exception('Unvorhergesehene HTTP-Rückmeldung: ${_response.statusCode}.');
@@ -89,4 +89,4 @@ Future<List<objects.UserTermin>> requestAlleTermine() async { //@foramtter:off
     terminliste.add(converter.jsonToTermin(termin));
   }
   return terminliste;
-} //@formatter:on
+} // @formatter:on

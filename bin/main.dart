@@ -1,4 +1,6 @@
 import 'package:http_request/http_request.dart' as http_request;
+import 'converter.dart' as converter;
+import 'exceptions.dart';
 import 'objects.dart' as objects;
 import 'requests/admin.dart' as admin;
 import 'requests/debug.dart' as debug;
@@ -13,6 +15,6 @@ main(List<String> arguments) async {
 //  await admin.Termin.terminLoeschen(38);
 //  debug.printListe(await admin.Termin.requestTerminListe(true));
 //  debug.printListe(await user.requestAlleTermine());
-  debug.printListe(await user.requestMeineTermine());
+//  debug.printListe(await user.requestMeineTermine());
 //  print(await user.requestTermin(31));
 }

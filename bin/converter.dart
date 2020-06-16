@@ -1,5 +1,10 @@
 import 'dart:collection';
+import 'package:intl/intl.dart' as intl;
+
 import 'objects.dart' as objects;
+
+dateTimeFormat(DateTime dateTime) => intl.DateFormat('dd.MM.yyyy HH:mm').format(dateTime);
+dateFormat(DateTime date) => intl.DateFormat('dd.MM.yyyy').format(date);
 
 // ------------------------------ JSON zu User ------------------------------
 
@@ -62,14 +67,13 @@ objects.UserTyp jsonToUserTyp(LinkedHashMap jsonAsList) {
 
 /// Konvertiert ein, mittels jsonDecode aus der dart:convert Library in eine LinkedHashMap konvertiertes, json-File
 /// in eine Liste mit Permission-Objekten.
-List<objects.Permission> jsonToPermission(var jsonAsList) {
+List<objects.Permission> jsonToPermission(var jsonAsList) { // @formatter:off
   var permissions = <objects.Permission>[];
   for (var p in jsonAsList) {
-    permissions.add(objects.Permission(
-        p['permissionid'], p['name'], p['description'], p['code']));
+    permissions.add(objects.Permission(p['permissionid'], p['name'], p['description'], p['code']));
   }
   return permissions;
-}
+} // @formatter:on
 
 // ----------------------------- JSON zu Termin -----------------------------
 
@@ -120,7 +124,6 @@ objects.Antwort jsonToAntwort(LinkedHashMap jsonAsList) {
   return objects.Antwort(jsonAsList['id'], jsonAsList['name']);
 }
 
-objects.Zyklus jsonToZyklus(LinkedHashMap jsonAsList) {
-  return objects.Zyklus(
-      jsonAsList['zyklusid'] ?? jsonAsList['id'], jsonAsList['name']);
-}
+objects.Zyklus jsonToZyklus(LinkedHashMap jsonAsList) { // @formatter:off
+  return objects.Zyklus(jsonAsList['zyklusid'] ?? jsonAsList['id'], jsonAsList['name']);
+} // @formatter:on
