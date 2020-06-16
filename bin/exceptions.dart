@@ -23,172 +23,35 @@ Exception exceptionHandler(int statusCode, {String c400, String c401, String c40
   return exception;
 } // @formatter:on
 
-class Exception400 implements Exception {
+// @formatter:off
+class Exception400 extends _HttpException { Exception400([String message]) : super(400, 'Bad Request / Allgemeiner Fehler in der Anfrage',    message); }
+class Exception401 extends _HttpException { Exception401([String message]) : super(401, 'Kein Token mitgeschickt oder Token existiert nicht', message); }
+class Exception403 extends _HttpException { Exception403([String message]) : super(403, 'Keine Berechtigung',                                 message); }
+class Exception404 extends _HttpException { Exception404([String message]) : super(404, 'Anfrage existiert nicht',                            message); }
+class Exception405 extends _HttpException { Exception405([String message]) : super(405, 'Falsche Request Methode verwendet',                  message); }
+class Exception409 extends _HttpException { Exception409([String message]) : super(409, 'Die Anfrage wurde unter falschen Annahmen gestellt', message); }
+class Exception410 extends _HttpException { Exception410([String message]) : super(410, 'Die Ressource wurde entfernt',                       message); }
+class Exception422 extends _HttpException { Exception422([String message]) : super(422, 'Semantisch falsche Anfrage',                         message); }
+class Exception423 extends _HttpException { Exception423([String message]) : super(423, 'Die Ressource ist noch nicht zugänglich',            message); }
+class Exception429 extends _HttpException { Exception429([String message]) : super(429, 'Es wurden zu viele Anfragen gestellt',               message); }
+class Exception500 extends _HttpException { Exception500([String message]) : super(500, 'Allgemeiner Server Fehler',                          message); }
+class Exception501 extends _HttpException { Exception501([String message]) : super(501, 'Anfrage wurde noch nicht implementiert',             message); }
+class Exception503 extends _HttpException { Exception503([String message]) : super(503, 'API ist im Wartungsmodus',                           message); }
+// @formatter:on
+
+class _HttpException implements Exception { // @formatter:off
+
+  final int    code;
+  final String standardMessage;
   final String message;
 
-  Exception400([this.message]);
+  _HttpException(this.code, this.standardMessage, [this.message]);
 
   @override
   String toString() {
     if (message == null) {
-      return 'Exception (400): Bad Request / Allgemeiner Fehler in der Anfrage';
+      return 'Exception ($code): $standardMessage';
     }
-    return 'Exception (400): $message';
+    return 'Exception ($code): $message';
   }
-}
-
-class Exception401 implements Exception {
-  final String message;
-
-  Exception401([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) {
-      return 'Exception (401): Kein Token mitgeschickt oder Token existiert nicht';
-    }
-    return 'Exception (401): $message';
-  }
-}
-
-class Exception403 implements Exception {
-  final String message;
-
-  Exception403([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) return 'Exception (403): Keine Berechtigung';
-    return 'Exception (403): $message';
-  }
-}
-
-class Exception404 implements Exception {
-  final String message;
-
-  Exception404([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) return 'Exception (404): Anfrage existiert nicht';
-    return 'Exception (404): $message';
-  }
-}
-
-class Exception405 implements Exception {
-  final String message;
-
-  Exception405([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) {
-      return 'Exception (405): Falsche Request Methode verwendet';
-    }
-    return 'Exception (405): $message';
-  }
-}
-
-class Exception409 implements Exception {
-  final String message;
-
-  Exception409([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) {
-      return 'Exception (409): Die Anfrage wurde unter falschen Annahmen gestellt';
-    }
-    return 'Exception (409): $message';
-  }
-}
-
-class Exception410 implements Exception {
-  final String message;
-
-  Exception410([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) return 'Exception (410): Die Ressource wurde entfernt';
-    return 'Exception (410): $message';
-  }
-}
-
-class Exception422 implements Exception {
-  final String message;
-
-  Exception422([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) return 'Exception (422): Semantisch falsche Anfrage';
-    return 'Exception (422): $message';
-  }
-}
-
-class Exception423 implements Exception {
-  final String message;
-
-  Exception423([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) {
-      return 'Exception (423): Die Ressource ist noch nicht zugänglich';
-    }
-    return 'Exception (423): $message';
-  }
-}
-
-class Exception429 implements Exception {
-  final String message;
-
-  Exception429([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) {
-      return 'Exception (429): Es wurden zu viele Anfragen gestellt';
-    }
-    return 'Exception (429): $message';
-  }
-}
-
-class Exception500 implements Exception {
-  final String message;
-
-  Exception500([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) return 'Exception (500): Allgemeiner Server Fehler';
-    return 'Exception (500): $message';
-  }
-}
-
-class Exception501 implements Exception {
-  final String message;
-
-  Exception501([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) {
-      return 'Exception (501): Anfrage wurde noch nicht implementiert';
-    }
-    return 'Exception (501): $message';
-  }
-}
-
-class Exception503 implements Exception {
-  final String message;
-
-  Exception503([this.message]);
-
-  @override
-  String toString() {
-    if (message == null) return 'Exception (503): API ist im Wartungsmodus';
-    return 'Exception (503): $message';
-  }
-}
+} // @formatter:on
