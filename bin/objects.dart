@@ -1,10 +1,15 @@
-//import 'package:path_provider/path_provider.dart';
-import 'converter.dart' as converter;
-import 'requests/variables.dart' as variables;
-import 'package:http/http.dart' as http;
-import 'pruefungen.dart' as pruefungen;
-import 'dart:io';
+// -------------------------------- Imports ---------------------------------
 
+// @formatter:off
+//import 'package:path_provider/path_provider.dart';
+import 'converter.dart'          as converter;
+import 'requests/variables.dart' as variables;
+import 'package:http/http.dart'  as http;
+import 'pruefungen.dart'         as pruefungen;
+import 'dart:io';
+// @formatter:on
+
+/// Einfacher Benutzer
 class User {
   // -------------------------------- Variablen -------------------------------
 
@@ -143,6 +148,7 @@ class User {
   }
 }
 
+/// Administrator-Benutzer
 class Admin extends User {
   // -------------------------------- Variablen -------------------------------
 
@@ -175,6 +181,8 @@ class Admin extends User {
   } // @formatter:on
 }
 
+/// Definiert welchen Typ ein Bentzer hat
+/// Über den Typen werden die Berechtigungen eines Benutzers definiert
 class UserTyp {
   // -------------------------------- Variablen -------------------------------
 
@@ -225,6 +233,7 @@ class UserTyp {
   }
 }
 
+/// Benutzerberechtigung
 class Permission {
   // -------------------------------- Variablen -------------------------------
 
@@ -248,6 +257,7 @@ class Permission {
   }
 }
 
+/// Termin mit allen für den einfachen Nutzer relevanten Parametern
 class UserTermin {
 
   // -------------------------------- Variablen -------------------------------
@@ -341,6 +351,7 @@ class UserTermin {
   }
 }
 
+/// Termin mit allen Parametern (wird für die Terminverwaltung benötigt)
 class AdminTermin extends UserTermin {
 
   // -------------------------------- Variablen -------------------------------
@@ -366,6 +377,7 @@ class AdminTermin extends UserTermin {
   }
 }
 
+/// Wird verwendet um die Zeitabstände, in denen regelmäßige Termine stattfinden, zu definieren.
 class Zyklus {
 
   // -------------------------------- Variablen -------------------------------
@@ -402,6 +414,7 @@ class Zyklus {
   }
 }
 
+/// Reaktion des Users, oder Gruppenleits auf einen Termin
 class Antwort {
 
   // -------------------------------- Variablen -------------------------------
@@ -445,6 +458,7 @@ class Antwort {
   }
 }
 
+/// Antwort auf einen Termin z.B. Zusage, oder Absage
 class AntwortTermin {
 
   // -------------------------------- Variablen -------------------------------

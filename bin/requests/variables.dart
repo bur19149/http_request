@@ -1,6 +1,9 @@
-import 'dart:io';
+// -------------------------------- Imports ---------------------------------
 
 import '../objects.dart' as objects;
+import 'dart:io';
+
+// -------------------------------- Variablen -------------------------------
 
 // @formatter:off
 final File orgAppConfig = File('OrgAppConfig.txt');
@@ -35,29 +38,40 @@ var permissions = const <objects.Permission>[objects.Permission(null, null, 'Erl
                                              objects.Permission(null, null, 'Darf eine Liste aller Bewerbe einsehen',                                             'bewerb.alle_zeigen'          )];
 // @formatter:on
 
+// ---------------------------- Datei-Management ----------------------------
+
+/// Enthält alle für das Datei-Management notwendigen Methoden.
 abstract class FileHandler {
+  // --------------------------------- Getter ---------------------------------
+
+  /// Stellt den Dateipfad der Applikation zur Verfügung
   static Future<String> get _localPath async {
-    //TODO auskommentieren bei einem Flutter Projekt
+    //TODO einkommentieren bei einem Flutter Projekt
 //    final directory=await getApplicationDocumentsDirectory();
 //    return directory.path;
   }
 
+  /// Erstellt das File
   static Future<File> get _localFile async {
     final path = await _localPath;
     return File('$path/orgAppToken.txt');
   }
 
+  // --------------------------------- Andere ---------------------------------
+
+  /// Speichert die Datei
   static Future<File> writeFile(String value) async {
-    final file = await _localFile; // Writes the file.
-    return file.writeAsString(value);
+    final file = await _localFile;
+    return file.writeAsString(value); // Schreibt den String in die Datei
   }
 
+  /// Liest die Datei
   static void readFile() async {
     try {
       final file = await _localFile;
       token = await file.readAsString();
     } catch (e) {
-      throw Exception('Zugriff verweigert, oder Datei $_localFile konnte nicht gefunden werden.');
+      throw 'Zugriff verweigert, oder Datei $_localFile konnte nicht gefunden werden.';
     }
   }
 }

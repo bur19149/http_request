@@ -1,5 +1,5 @@
 // @formatter:off
-/// Der Exceptionhandler liest den Statuscode aus und gibt die dazugehörige Exception zurück
+/// Der Exceptionhandler liest den Statuscode aus und gibt die dazugehörige Exception zurück.
 /// Optional können für die jeweiligen Fehlercodes auch benutzderdefinierte Fehlermeldungen
 /// definiert werden.
 Exception exceptionHandler(int statusCode, {String c400, String c401, String c403,

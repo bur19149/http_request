@@ -1,88 +1,70 @@
-import '../exceptions.dart';
-import '../pruefungen.dart' as pruefungen;
+// -------------------------------- Imports ---------------------------------
+
+// @formatter:off
+import '../pruefungen.dart'     as pruefungen;
 import 'package:http/http.dart' as http;
-import '../converter.dart' as converter;
-import 'variables.dart' as variables;
-import '../objects.dart' as objects;
-import 'dart:convert' as convert;
-import 'debug.dart' as debug;
+import '../converter.dart'      as converter;
+import 'variables.dart'         as variables;
+import '../objects.dart'        as objects;
+import 'dart:convert'           as convert;
+import '../exceptions.dart';
+// @formatter:on
 
-//formatter:off
-//TODO parameter name und model implemetieren
-/// Wird zum Einloggen verwendet
-/// value ist der Key der auf der Website generiert werden kann
-void link(String value) async {
-  debug.output(await http.post('${variables.url}/link', body: {
-    'userkey': '$value',
-    'name': 'Dominiks PC',
-    'model': 'ASUS-PC',
-    'version': '0.1'
-  }));
-}
+// ------------------------------ GET-Requests ------------------------------
 
-//formatter:on
-// TODO mergen von validateToken & validate
-//  Future<bool> valtidateToken() async {
-//    ReusableMethods.stringPrufung(variables.token);
-//    var response =
-//        await http.get('${variables.url}/validate?token=${variables.token}');
-//    // var response=await http.get('${Verwaltung.url}validate',headers:{'token': '${Verwaltung.token}'});
-//    /*for debugging*/
-//    print(response.statusCode);
-//    if (response.statusCode == 200) {
-//      return true;
-//    } else
-//    // 401 = Ein solcher Token existiert nicht in der Datenbank.
-//    // 403 = Der Token ist abgelaufen bzw. wurde vom User entfernt.
-//    //TODO schauen ob writeFile('') den token im file überschreibt, und alle möglichkeiten triggern aka 401/403
-//    if (response.statusCode == 401 || response.statusCode == 403) {
-//      await variables.FileHandler.writeFile('');
-//      return false;
-//    }
-//    throw Exception(
-//        'unvorhergesehene HTTP Rückmeldung: ${response.statusCode}');
-//  }
-/// Lässt den Server den beim Einloggen generierten Token validieren
-Future<bool> validate() async {
-  debug.output(await http.get('${variables.url}/validate?token=${variables.token}'));
-  //TODO
-  return null;
-}
-
-void login(String value) async {
-  RegExp a = RegExp(r'^[A-Za-z0-9]+$');
-  if (!a.hasMatch(pruefungen.stringPrufung(value))) {
-    throw ('Ungültiger UserToken.');
-  } else {
-    var url = '${variables.url}link';
-    //TODO für model das Handy modell holen und ka was wir mit Name machen.
-    var _response = await http.post(url, body: {
-      'userkey': '$value',
-      'name': 'POST',
-      'model': '???',
-      'version': '${variables.appVersion}'
-    });
-
-    // API DOKU SAGT:
-    // Userkey unknown: 404 Ein solcher Schlüssel existiert nicht in der Datenbank.
-    // Userkey invalid: 400 Der Schlüssel ist abgelaufen oder wurde bereits erfolgreich benutzt.
-    // Parameter missing: 422 Es fehlen ein oder mehr Parameter
-
-    if (_response.statusCode == 200) {
-      await variables.FileHandler.writeFile(
-          RegExp('.*"(.*)"}}').allMatches(_response.body).toList()[0].group(1));
-    } else {
-      throw exceptionHandler(_response.statusCode);
-    }
-  }
-}
-
-/// Liefert den eigenen User zurück.
-/// Kann je nach Usertyp ein User-, oder ein Admin-Objekt zurückliefern.
-Future<objects.User> requestUser() async {
-  var _response =
-      await http.get('${variables.url}/user?token=${variables.token}');
+/// "4.7.3 User Daten
+/// Endpunkt, um die User Daten zu dem API Token zu erfragen. Als Parameter wird der Token
+/// übergeben. Die Rückgabe enthält alle Daten zu dem User nach Berechtigung. Admin Notizen und
+/// hinzugefügte Dateien werden nur mit Berechtigung ausgegeben. Besitzt der Account weitere
+/// verbundene Accounts, so werden diese auch mit ausgegeben."
+///
+/// Dokumentation der API-Doku v2.6 v. Tobias Möller entnommen
+Future<objects.User> requestUser() async { // @formatter:off
+  var _response = await http.get('${variables.url}/user?token=${variables.token}');
   if (_response.statusCode != 200) throw exceptionHandler(_response.statusCode);
-  return converter
-      .jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
-}
+  return converter.jsonToUser(convert.jsonDecode(_response.body)['data']['user']);
+} // @formatter:on
+
+// ------------------------------ POST-Requests -----------------------------
+
+// TODO Parameter Name und Model implemetieren
+/// "4.7.1 Pairing
+/// Dieser Endpunkt dient zum Verbinden eines Accounts mit einer App. Es wird der lesbare User
+/// Schlüssel als Parameter angenommen und ein neu generierter API Token zurückgegeben. Dieser
+/// Token wird in der Datenbank mit dem User Account verknüpft. [...]"
+///
+/// Dokumentation der API-Doku v2.6 v. Tobias Möller entnommen
+Future<String> link(String value) async { // @formatter:off
+  var _response = await http.post('${variables.url}/link', body: {
+    'userkey': '$value',
+    'name':    'Dominiks PC',
+    'model':   'ASUS-PC',
+    'version': variables.appVersion
+  });
+  if(_response.statusCode != 200) {
+    exceptionHandler(_response.statusCode, c404: 'Ein solcher Schlüssel existiert nicht in der Datenbank',
+                                           c400: 'Der Schlüssel ist abgelaufen oder wurde bereits erfolgreich benutzt.',
+                                           c422: 'Es fehlen ein oder mehr Parameter');
+  }
+  return RegExp('.*"(.*)"}}').allMatches(_response.body).toList()[0].group(1);
+} // @formatter:on
+
+/// "4.7.2 Validate Token
+/// Endpunkt, um die Gültigkeit eines Tokens zu erfragen. Als Parameter wird der Token übergeben."
+///
+/// Dokumentation der API-Doku v2.6 v. Tobias Möller entnommen
+validate() async { // @formatter:off
+  var _response = await http.get('${variables.url}/validate?token=${variables.token}');
+  if(_response.statusCode != 200) {
+    throw exceptionHandler(_response.statusCode, c401: 'Ein solcher Token existiert nicht in der Datenbank.',
+                                                 c403: 'Der Token ist abgelaufen bzw. wurde vom User entfernt.');
+  }
+} // @formatter:on
+
+// --------------------------------- Andere ---------------------------------
+
+/// Übergibt den Schlüssel [link], welches daraus einen Token generiert, der dann in ein Text-File gespeichert wird.
+login(String value) async { // @formatter:off
+  if (!RegExp('[0-z\$%.=_!?+-]{64}').hasMatch(pruefungen.stringPrufung(value))) throw 'Ungültiger UserToken.';
+    await variables.FileHandler.writeFile(await link(value));
+} // @formatter:on
