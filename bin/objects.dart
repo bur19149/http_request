@@ -86,25 +86,10 @@ class User {
   /// Die eingegebene E-Mail Adresse wird mit einer Regular Expression überprüft und mit
   /// einem Pusch wird geschaut ob mehr als ein "@" drinnen ist kann Verbessert werden
   set email(String value) {
-    value = pruefungen.stringPrufung(value);
-    RegExp abc = RegExp(
-        r'[A-Za-z0-9!#\$%&+\/=?^_`{|}~-]+(?:.[A-Za-z0-9!#\$%&+\/=?^_`{|}~-]+)@(?:[a-zA-Z0-9]'
-        r'[a-zA-Z0-9-]{0,253}.)[a-zA-Z0-9][a-zA-Z0-9-]{0,253}.[a-zA-Z0-9]{2,}');
-    if (abc.hasMatch(value)) {
-      int count = 0;
-      for (int a = 0; a < value.length; a++) {
-        if (value[a].contains('@')) {
-          count++;
-        }
-      }
-      if (count > 1) {
-        throw 'Ungültige Email Adresse. Mehr als ein \"@\"';
-      } else {
-        _email = value;
-      }
-    } else {
-      throw ('Ungültige Email Adresse.');
-    }
+    if (RegExp('[0-9A-Za-z!#\$%&+\\/=?^_`{|}~-]+(?:\.[0-9A-Za-z!#\$%&+\\/=?^_`{|}~-]+)'
+        '{0,1}@[0-9A-Za-z][0-9A-Za-z-]{0,253}[0-9A-Za-z][0-9A-Za-z-]{0,253}\.[0-9A-Za-z]{2,}')
+        .hasMatch(pruefungen.stringPrufung(value))) throw ('Ungültige Email Adresse.');
+      _email = value;
   }
 
   ///Es darf Null übergeben werden da ein User auch keine kinder haben kann.
