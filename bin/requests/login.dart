@@ -65,6 +65,6 @@ validate() async { // @formatter:off
 
 /// Übergibt den Schlüssel [link], welches daraus einen Token generiert, der dann in ein Text-File gespeichert wird.
 login(String value) async { // @formatter:off
-  if (!RegExp('[A-z]{8}').hasMatch(pruefungen.stringPrufung(value))) throw 'Ungültiger UserToken.';
+  if (!RegExp('[0-z]{8}').hasMatch(pruefungen.stringPrufung(value))) throw 'Ungültiger UserToken.';
     await variables.FileHandler.writeFile(await link(value));
 } // @formatter:on
