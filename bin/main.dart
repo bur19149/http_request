@@ -1,13 +1,18 @@
-import 'package:http_request/http_request.dart' as http_request;
-import 'converter.dart' as converter;
-import 'exceptions.dart';
-import 'objects.dart' as objects;
-import 'requests/admin.dart' as admin;
-import 'requests/debug.dart' as debug;
-import 'requests/login.dart' as login;
-import 'requests/user.dart' as user;
-import 'requests/variables.dart' as variables;
+// -------------------------------- Imports ---------------------------------
 
+// @formatter:off
+import 'package:http_request/http_request.dart' as http_request;
+import 'converter.dart'                         as converter;
+import 'objects.dart'                           as objects;
+import 'requests/admin.dart'                    as admin;
+import 'requests/debug.dart'                    as debug;
+import 'requests/login.dart'                    as login;
+import 'requests/user.dart'                     as user;
+import 'requests/variables.dart'                as variables;
+import 'exceptions.dart';
+// @formatter:on
+
+// ------------------------------- Checkliste -------------------------------
 
 // TODO Checkliste für fertige Files, sprich Files in denen alles dokumentiert und getestet wurde
 // * requests/debug.dart
@@ -25,6 +30,8 @@ import 'requests/variables.dart' as variables;
 // TODO unfertige Files
 // * requests/admin.dart
 //      - bearbeiteUser wirft Code 500 (auch in Postman)
+
+// ---------------------------------- Main ----------------------------------
 
 main(List<String> arguments) async {
 //  await admin.Termin.addUserZuTermin(42, 23);
