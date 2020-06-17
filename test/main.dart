@@ -1,15 +1,14 @@
 // -------------------------------- Imports ---------------------------------
 
 // @formatter:off
-import 'package:http_request/http_request.dart' as http_request;
-import 'converter.dart'                         as converter;
-import 'objects.dart'                           as objects;
-import 'requests/admin.dart'                    as admin;
-import 'requests/debug.dart'                    as debug;
-import 'requests/login.dart'                    as login;
-import 'requests/user.dart'                     as user;
-import 'requests/variables.dart'                as variables;
-import 'exceptions.dart';
+import '../lib/converter.dart'                         as converter;
+import '../lib/objects.dart'                           as objects;
+import '../lib/requests/admin.dart'                    as admin;
+import '../lib/requests/debug.dart'                    as debug;
+import '../lib/requests/login.dart'                    as login;
+import '../lib/requests/user.dart'                     as user;
+import '../lib/requests/variables.dart'                as variables;
+import '../lib/exceptions.dart';
 // @formatter:on
 
 // ------------------------------- Checkliste -------------------------------

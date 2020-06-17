@@ -23,7 +23,7 @@ class User {
   String     _ort;
   int        parent;        // (optional) zugeordneter Elternaccount wenn Kind
   UserTyp    _typ;
-  List<int>  _children;     // (optional) zugeordnete Kinder wenn Elternaccount
+  List<int>  children;      // (optional) zugeordnete Kinder wenn Elternaccount
   bool       registered;    // Zweck des Parameters wird in API-Doku nicht erklärt
   // @formatter:on
 
@@ -60,15 +60,10 @@ class User {
     _nachname = pruefungen.prufeName(pruefungen.stringPrufung(value));
   }
 
-  ///Wegen der API ist der String Datentyp nötig.
   set plz(String value) {
-    //wann man "value" auf int setzt schreit der DUMME kompiler.
-    var megaGay = int.parse(pruefungen.stringPrufung(value)); //workaround
-    if (megaGay < 1000 || megaGay > 9992) {
-      throw ('Die Postleitzahl ist ungültig.');
-    } else {
-      _plz = megaGay.toString();
-    }
+    var intplz = int.parse(pruefungen.stringPrufung(value));
+    if (intplz < 1000 || intplz > 9992) throw 'Die Postleitzahl ist ungültig.';
+    _plz = value;
   }
 
   set ort(String value) {
@@ -83,18 +78,11 @@ class User {
     }
   }
 
-  /// Die eingegebene E-Mail Adresse wird mit einer Regular Expression überprüft und mit
-  /// einem Pusch wird geschaut ob mehr als ein "@" drinnen ist kann Verbessert werden
   set email(String value) {
     if (RegExp('[0-9A-Za-z!#\$%&+\\/=?^_`{|}~-]+(?:\.[0-9A-Za-z!#\$%&+\\/=?^_`{|}~-]+)'
         '{0,1}@[0-9A-Za-z][0-9A-Za-z-]{0,253}[0-9A-Za-z][0-9A-Za-z-]{0,253}\.[0-9A-Za-z]{2,}')
-        .hasMatch(pruefungen.stringPrufung(value))) throw ('Ungültige Email Adresse.');
+        .hasMatch(pruefungen.stringPrufung(value))) throw 'Ungültige Email-Adresse';
       _email = value;
-  }
-
-  ///Es darf Null übergeben werden da ein User auch keine kinder haben kann.
-  set children(List<int> value) {
-    _children = value;
   }
 
   // --------------------------------- Getter ---------------------------------
@@ -107,7 +95,6 @@ class User {
   String     get ort      => _ort;
   String     get email    => _email;
   UserTyp    get typ      => _typ;
-  List<int>  get children => _children;
   // @formatter:on
 
   // -------------------------------- toString --------------------------------
@@ -122,9 +109,9 @@ class User {
     if (parent != null) {
       str += 'Elternteil:   $parent';
     }
-    if (_children != null && _children.isNotEmpty) {
+    if (children != null && children.isNotEmpty) {
       str += '\nKinder:\n---------------\n';
-      for (int child in _children) {
+      for (int child in children) {
         str += '$child\n';
       }
       str += '---------------\n';
@@ -289,11 +276,8 @@ class UserTermin {
 
   /// Die maximale Anzahl Plätze auf der Website ist 99.
   set plaetze(int value) {
-    if (value < 1 || value > 99) {
-      throw Exception('Die Platzanzahl ist ungültig.');
-    } else {
-      _plaetze = value;
-    }
+    if (value < 1 || value > 99) throw 'Die Platzanzahl ist ungültig.';
+    _plaetze = value;
   }
 
   set beschreibung(String value) {
@@ -301,11 +285,8 @@ class UserTermin {
   }
 
   set zyklus(Zyklus value) {
-    if (value == null) {
-      throw 'Zyklus darf nicht null sein!';
-    } else {
-      _zyklus = value;
-    }
+    if (value == null) throw 'Zyklus darf nicht null sein!';
+    _zyklus = value;
   }
 
   // --------------------------------- Getter ---------------------------------
